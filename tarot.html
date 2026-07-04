@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星辰塔罗 · 命运指引</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@200;300;400;500&display=swap');
+
+:root {
+  --deep-space: #050810;
+  --space-blue: #0a0f20;
+  --space-purple: #1a0f2e;
+  --gold: #ffffff;
+  --gold-soft: rgba(255, 255, 255, 0.6);
+  --gold-glow: rgba(255, 255, 255, 0.4);
+  --silver: #c0c0c0;
+  --white-star: rgba(255, 255, 255, 0.9);
+  --text-primary: rgba(220, 240, 255, 0.95);
+  --text-secondary: rgba(180, 200, 230, 0.7);
+  --text-muted: rgba(120, 150, 200, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-soft);
+  border-radius: 2px;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--deep-space);
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-primary);
+}
+
+#star-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: radial-gradient(ellipse at 30% 20%, var(--space-purple) 0%, var(--deep-space) 50%),
+              radial-gradient(ellipse at 70% 80%, var(--space-blue) 0%, var(--deep-space) 40%);
+}
+
+.star {
+  position: absolute;
+  background: var(--white-star);
+  border-radius: 50%;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.comet {
+  position: absolute;
+  width: 2px;
+  height: 100px;
+  background: linear-gradient(to bottom, var(--white-star), transparent);
+  opacity: 0;
+  animation: comet 8s linear infinite;
+}
+
+@keyframes comet {
+  0% { opacity: 0; transform: translateY(-100px); }
+  10% { opacity: 0.8; }
+  20% { opacity: 0; }
+  100% { opacity: 0; transform: translateY(100vh); }
+}
+
+.stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.stage.active {
+  opacity: 1;
+  pointer-events: auto;
+  overflow-y: auto;
+}
+
+.typewriter-text {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--gold);
+  animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--gold); }
+}
+
+.phase-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-soft);
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.btn {
+  padding: 12px 36px;
+  background: rgba(212, 168, 83, 0.1);
+  border: 1px solid var(--gold-soft);
+  border-radius: 25px;
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Noto Sans SC', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  background: rgba(212, 168, 83, 0.15);
+  border-color: var(--gold);
+  box-shadow: 0 0 30px var(--gold-glow), 0 0 60px rgba(212, 168, 83, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#stage1 {
+  text-align: center;
+}
+
+.stage1-content {
+  width: 60%;
+  max-width: 600px;
+}
+
+.question-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+  font-weight: 200;
+}
+
+.question-input {
+  width: 100%;
+  min-height: 100px;
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 200;
+  padding: 20px;
+  resize: none;
+  outline: none;
+  transition: all 0.4s ease;
+  font-family: 'Noto Sans SC', sans-serif;
+  backdrop-filter: blur(10px);
+}
+
+.question-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(212, 168, 83, 0.2);
+}
+
+.question-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 200;
+}
+
+.input-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-top: 15px;
+  font-weight: 200;
+}
+
+#stage2 {
+  background: rgba(5, 8, 16, 0.95);
+}
+
+.shuffle-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.shuffle-animation {
+  position: relative;
+  width: 400px;
+  height: 560px;
+  perspective: 1200px;
+}
+
+.shuffle-card {
+  position: absolute;
+  width: 80px;
+  height: 120px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(212, 168, 83, 0.1);
+  font-size: 2rem;
+  color: var(--gold);
+  opacity: 0.7;
+}
+
+.shuffle-card::before {
+  content: '☽';
+  opacity: 0.5;
+}
+
+.shuffle-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.shuffle-text {
+  margin-top: 50px;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 200;
+  letter-spacing: 0.2em;
+}
+
+.shuffle-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.shuffle-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold-soft);
+  border-radius: 50%;
+  animation: shufflePulse 1.4s ease-in-out infinite;
+}
+
+.shuffle-dot:nth-child(2) { animation-delay: 0.2s; }
+.shuffle-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes shufflePulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+#stage3 {
+  overflow: hidden;
+}
+
+.stage3-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stage3-header {
+  margin-top: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 500;
+}
+
+.cards-fan-container {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+  padding: 0;
+}
+
+.cards-fan {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  height: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tarot-card {
+  position: absolute;
+  width: 70px;
+  height: 100px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  transform-origin: bottom center;
+}
+
+.tarot-card::before {
+  content: '☽';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: var(--gold);
+  opacity: 0.4;
+}
+
+.tarot-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.tarot-card:hover {
+  transform: translateY(-20px) scale(1.3) !important;
+  z-index: 100;
+  border-color: var(--gold);
+  box-shadow: 0 20px 60px rgba(212, 168, 83, 0.4), 0 0 30px rgba(212, 168, 83, 0.2);
+}
+
+.tarot-card.selected {
+  transform: translateY(-25px) scale(1.4) !important;
+  z-index: 100;
+  border-color: var(--gold);
+  box-shadow: 0 0 40px var(--gold), 0 20px 60px rgba(212, 168, 83, 0.5);
+}
+
+.tarot-card.selected::before {
+  content: '✦';
+  opacity: 1;
+  text-shadow: 0 0 20px var(--gold);
+}
+
+.tarot-card.selected::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+.tarot-card .check-mark {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--deep-space);
+  font-weight: bold;
+  box-shadow: 0 0 15px var(--gold);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tarot-card.selected .check-mark {
+  opacity: 1;
+}
+
+.stage3-footer {
+  margin-bottom: 40px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1000;
+}
+
+.selected-count {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+#stage4 {
+  padding: 40px 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding-bottom: 150px;
+}
+
+.stage4-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-cards-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.result-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 25px;
+  backdrop-filter: blur(20px);
+  width: calc(33.333% - 20px);
+  min-width: 280px;
+  box-sizing: border-box;
+  flex: 1;
+  max-width: calc(33.333% - 20px);
+}
+
+.result-card-image {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 180px;
+  aspect-ratio: 180 / 260;
+  height: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--gold-soft);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.result-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.result-card-info {
+  width: 100%;
+  text-align: center;
+}
+
+.card-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.card-english-name {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.card-position {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.card-meaning-section {
+  margin-bottom: 25px;
+}
+
+.card-meaning-section:last-child {
+  margin-bottom: 0;
+}
+
+.card-meaning-title {
+  font-size: 0.8rem;
+  color: var(--gold-soft);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.card-meaning-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 2;
+  font-weight: 300;
+}
+
+.card-reversed {
+  transform: rotate(180deg);
+}
+
+.reading-summary {
+  width: 100%;
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(20px);
+}
+
+.summary-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.summary-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 2;
+  font-weight: 200;
+  text-align: center;
+}
+
+.back-btn {
+  margin-top: 40px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 8, 16, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--gold-soft);
+  letter-spacing: 0.2em;
+}
+
+@media (max-width: 768px) {
+  .stage1-content {
+    width: 90%;
+  }
+  
+  .phase-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+  }
+  
+  .cards-fan {
+    height: 350px;
+  }
+  
+  .tarot-card {
+    width: 45px;
+    height: 65px;
+  }
+  
+  .tarot-card:hover,
+  .tarot-card.selected {
+    transform: translateY(-20px) scale(1.3) !important;
+  }
+  
+  #stage4 {
+    padding: 15px;
+    padding-bottom: 100px;
+  }
+  
+  .stage4-content {
+    padding: 10px 0;
+  }
+  
+  .result-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    padding: 20px;
+  }
+  
+  .result-card-image {
+    max-width: 140px;
+    aspect-ratio: 140 / 200;
+    height: auto;
+  }
+  
+  .result-card-info {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .card-name {
+    font-size: 1.2rem;
+  }
+  
+  .card-position {
+    margin-bottom: 15px;
+  }
+  
+  .card-meaning-text {
+    font-size: 0.85rem;
+  }
+}
+</style>
+</head>
+<body>
+<div id="star-bg"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">命运之轮转动中...</div>
+</div>
+
+<div class="stage active" id="stage1">
+  <div class="stage1-content">
+    <div class="phase-title" id="stage1Title">Phase I · The Question</div>
+    <div class="question-label" id="questionLabel">心中默念你的问题</div>
+    <textarea class="question-input" id="questionInput" placeholder="请输入你想问的问题..." rows="4"></textarea>
+    <div class="input-hint">清晰的问题将引导你找到答案</div>
+    <button class="btn" id="startBtn" style="margin-top: 30px;">开始抽卡</button>
+  </div>
+</div>
+
+<div class="stage" id="stage2">
+  <div class="shuffle-container">
+    <div class="phase-title">Phase II · The Shuffle</div>
+    <div class="shuffle-animation" id="shuffleAnimation"></div>
+    <div class="shuffle-text" id="shuffleText">正在洗牌...</div>
+    <div class="shuffle-dots">
+      <div class="shuffle-dot"></div>
+      <div class="shuffle-dot"></div>
+      <div class="shuffle-dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="stage" id="stage3">
+  <div class="stage3-content">
+    <div class="stage3-header">
+      <div class="phase-title">Phase III · The Selection</div>
+      <div class="question-label">请选择1-3张卡牌</div>
+    </div>
+    <div class="cards-fan-container">
+      <div class="cards-fan" id="cardsFan"></div>
+    </div>
+    <div class="stage3-footer">
+      <span class="selected-count" id="selectedCount">请选择 3 张卡牌 (0/3)</span>
+    </div>
+  </div>
+</div>
+
+<div class="stage" id="stage4">
+  <div class="stage4-content">
+    <div class="phase-title">Phase IV · The Revelation</div>
+    <div class="result-cards-container" id="resultCardsContainer"></div>
+    <div class="reading-summary">
+      <div class="summary-title">Reading Summary</div>
+      <div class="summary-text" id="summaryText"></div>
+    </div>
+    <button class="btn back-btn" id="backBtn">重新开始</button>
+  </div>
+</div>
+
+<script>
+const TAROT_DATA_URL = 'https://raw.githubusercontent.com/w94stan-boop/tarot-images/main/images/manifest.json';
+
+const MAJOR_ARCANA = [
+  { id: 0, name: '愚者', english: 'The Fool', meaning: '新的开始、冒险、天真无邪、自由精神', reversed: '鲁莽、冒险失败、缺乏方向', advice: '勇敢迈出第一步，但保持清醒的头脑' },
+  { id: 1, name: '魔术师', english: 'The Magician', meaning: '创造力、技能、意志、自信', reversed: '欺骗、操纵、缺乏自信', advice: '相信你的能力，善用你的资源' },
+  { id: 2, name: '女祭司', english: 'The High Priestess', meaning: '直觉、神秘、内在智慧、精神力量', reversed: '表面化、隐藏的动机、忽视直觉', advice: '倾听内心的声音，相信直觉' },
+  { id: 3, name: '皇后', english: 'The Empress', meaning: '丰饶、母性、美、自然', reversed: '依赖、过度保护、忽视需求', advice: '接纳生命的丰盛，培养创造力' },
+  { id: 4, name: '皇帝', english: 'The Emperor', meaning: '权威、结构、父性、稳定', reversed: '专制、僵化、缺乏自律', advice: '建立秩序，承担责任' },
+  { id: 5, name: '教皇', english: 'The Hierophant', meaning: '传统、信仰、导师、精神指引', reversed: '非传统、质疑权威、独立思考', advice: '尊重传统，但保持独立判断' },
+  { id: 6, name: '恋人', english: 'The Lovers', meaning: '爱情、和谐、选择、关系', reversed: '不和谐、错误的选择、背叛', advice: '用心选择，珍惜真诚的关系' },
+  { id: 7, name: '战车', english: 'The Chariot', meaning: '胜利、意志力、控制、前进', reversed: '失控、冲突、缺乏方向', advice: '坚定信念，勇往直前' },
+  { id: 8, name: '力量', english: 'Strength', meaning: '勇气、耐心、内在力量、控制', reversed: '软弱、自我怀疑、滥用力量', advice: '用温柔的力量克服困难' },
+  { id: 9, name: '隐士', english: 'The Hermit', meaning: '内省、孤独、智慧、寻求真理', reversed: '孤立、拒绝帮助、自我封闭', advice: '花时间独处，寻找内心的答案' },
+  { id: 10, name: '命运之轮', english: 'Wheel of Fortune', meaning: '命运、转变、周期、机遇', reversed: '抗拒变化、厄运、延迟', advice: '顺应潮流，相信命运的安排' },
+  { id: 11, name: '正义', english: 'Justice', meaning: '公正、真理、法律、因果', reversed: '不公正、偏见、逃避责任', advice: '追求真理，承担应有的责任' },
+  { id: 12, name: '倒吊人', english: 'The Hanged Man', meaning: '牺牲、等待、新视角、放手', reversed: '拖延、抗拒、缺乏牺牲精神', advice: '放下执念，换个角度看问题' },
+  { id: 13, name: '死神', english: 'Death', meaning: '结束、转变、重生、新开始', reversed: '抗拒变化、停滞、恐惧终结', advice: '接受结束，迎接新生' },
+  { id: 14, name: '节制', english: 'Temperance', meaning: '平衡、耐心、调和、适度', reversed: '失衡、过度、缺乏耐心', advice: '保持平衡，适度行事' },
+  { id: 15, name: '恶魔', english: 'The Devil', meaning: '束缚、欲望、诱惑、阴影', reversed: '摆脱束缚、面对恐惧、解放', advice: '认清诱惑，保持清醒' },
+  { id: 16, name: '塔', english: 'The Tower', meaning: '突变、破坏、觉醒、释放', reversed: '逃避灾难、恐惧变化、延迟崩溃', advice: '接受突变，重建基础' },
+  { id: 17, name: '星星', english: 'The Star', meaning: '希望、灵感、宁静、疗愈', reversed: '失望、缺乏信心、混乱', advice: '保持希望，相信未来' },
+  { id: 18, name: '月亮', english: 'The Moon', meaning: '幻觉、恐惧、潜意识、直觉', reversed: '混乱、不安、隐藏的敌人', advice: '面对恐惧，相信直觉' },
+  { id: 19, name: '太阳', english: 'The Sun', meaning: '快乐、成功、活力、乐观', reversed: '消极、延迟成功、缺乏快乐', advice: '保持乐观，享受当下' },
+  { id: 20, name: '审判', english: 'Judgement', meaning: '重生、召唤、觉醒、原谅', reversed: '自我怀疑、拒绝召唤、缺乏原谅', advice: '倾听内心的召唤，勇于改变' },
+  { id: 21, name: '世界', english: 'The World', meaning: '完成、整合、成就、旅行', reversed: '未完成、缺乏 closure、抗拒结束', advice: '庆祝成就，准备新的旅程' }
+];
+
+const MINOR_ARCANA = {
+  wands: [
+    { id: 22, name: '权杖一', english: 'Ace of Wands', meaning: '创意、新开始、热情、灵感', reversed: '延迟、缺乏热情、创意受阻', advice: '抓住机会，勇敢行动' },
+    { id: 23, name: '权杖二', english: 'Two of Wands', meaning: '远见、规划、决策、冒险', reversed: '缺乏规划、犹豫不决', advice: '放眼未来，做好规划' },
+    { id: 24, name: '权杖三', english: 'Three of Wands', meaning: '远见、扩展、成功、监督', reversed: '缺乏远见、失败的计划', advice: '相信你的远见，继续前进' },
+    { id: 25, name: '权杖四', english: 'Four of Wands', meaning: '庆祝、稳定、和谐、家庭', reversed: '不稳定、冲突、延迟庆祝', advice: '享受当下的喜悦' },
+    { id: 26, name: '权杖五', english: 'Five of Wands', meaning: '冲突、竞争、挑战、分歧', reversed: '解决冲突、妥协、和谐', advice: '直面挑战，寻找解决之道' },
+    { id: 27, name: '权杖六', english: 'Six of Wands', meaning: '胜利、认可、成功、名望', reversed: '虚假的胜利、缺乏认可', advice: '享受成功，但保持谦逊' },
+    { id: 28, name: '权杖七', english: 'Seven of Wands', meaning: '防御、坚持、勇气、挑战', reversed: '放弃、缺乏勇气、被击败', advice: '坚持立场，勇敢防御' },
+    { id: 29, name: '权杖八', english: 'Eight of Wands', meaning: '迅速行动、消息、旅行、进展', reversed: '延迟、阻碍、消息延迟', advice: '迅速行动，抓住机会' },
+    { id: 30, name: '权杖九', english: 'Nine of Wands', meaning: '警惕、防御、耐力、准备', reversed: '过度警惕、缺乏准备、恐惧', advice: '保持警惕，但不要过度紧张' },
+    { id: 31, name: '权杖十', english: 'Ten of Wands', meaning: '负担、责任、压力、过度承诺', reversed: '放下负担、寻求帮助', advice: '学会放手，寻求帮助' },
+    { id: 32, name: '权杖骑士', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
+    { id: 33, name: '权杖王后', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
+    { id: 34, name: '权杖国王', english: 'Queen of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
+    { id: 35, name: '权杖皇后', english: 'King of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
+  ],
+  cups: [
+    { id: 36, name: '圣杯一', english: 'Ace of Cups', meaning: '爱、情感、新关系、直觉', reversed: '情感阻塞、拒绝爱', advice: '敞开心扉，接纳爱与情感' },
+    { id: 37, name: '圣杯二', english: 'Two of Cups', meaning: '伙伴关系、爱情、和谐、平等', reversed: '不平等的关系、冲突', advice: '建立平等和谐的关系' },
+    { id: 38, name: '圣杯三', english: 'Three of Cups', meaning: '庆祝、友谊、社交、快乐', reversed: '过度社交、肤浅的关系', advice: '享受友谊，珍惜真挚的情感' },
+    { id: 39, name: '圣杯四', english: 'Four of Cups', meaning: '不满、冷漠、内省、选择', reversed: '盲目接受、缺乏内省', advice: '审视内心，做出明智的选择' },
+    { id: 40, name: '圣杯五', english: 'Five of Cups', meaning: '悲伤、失落、遗憾、失望', reversed: '接受现实、恢复希望', advice: '面对悲伤，寻找希望' },
+    { id: 41, name: '圣杯六', english: 'Six of Cups', meaning: '怀旧、回忆、慷慨、童年', reversed: '沉溺过去、过度依赖', advice: '珍惜回忆，但活在当下' },
+    { id: 42, name: '圣杯七', english: 'Seven of Cups', meaning: '幻想、选择、梦想、幻觉', reversed: '缺乏幻想、现实感、决策困难', advice: '面对现实，做出明智的选择' },
+    { id: 43, name: '圣杯八', english: 'Eight of Cups', meaning: '离开、寻求更好、放弃', reversed: '不愿离开、停滞、缺乏勇气', advice: '勇敢离开，寻求更好的未来' },
+    { id: 44, name: '圣杯九', english: 'Nine of Cups', meaning: '满足、愿望实现、幸福、成功', reversed: '不满、愿望未实现、缺乏感恩', advice: '珍惜已拥有的，感恩生活' },
+    { id: 45, name: '圣杯十', english: 'Ten of Cups', meaning: '家庭和谐、幸福、满足、团聚', reversed: '家庭冲突、不幸福、分离', advice: '珍惜家庭，维护和谐' },
+    { id: 46, name: '圣杯骑士', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
+    { id: 47, name: '圣杯王后', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
+    { id: 48, name: '圣杯国王', english: 'Queen of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
+    { id: 49, name: '圣杯皇后', english: 'King of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
+  ],
+  swords: [
+    { id: 50, name: '宝剑一', english: 'Ace of Swords', meaning: '真理、清晰、新思想、沟通', reversed: '混乱、误解、沟通不畅', advice: '寻求真理，清晰表达' },
+    { id: 51, name: '宝剑二', english: 'Two of Swords', meaning: '平衡、决策、犹豫、僵局', reversed: '失衡、逃避决策、冲突', advice: '保持平衡，做出决策' },
+    { id: 52, name: '宝剑三', english: 'Three of Swords', meaning: '心碎、悲伤、背叛、痛苦', reversed: '疗愈、原谅、接受', advice: '面对痛苦，寻求疗愈' },
+    { id: 53, name: '宝剑四', english: 'Four of Swords', meaning: '休息、恢复、冥想、撤退', reversed: '过度休息、缺乏行动', advice: '适当休息，恢复精力' },
+    { id: 54, name: '宝剑五', english: 'Five of Swords', meaning: '冲突、胜利、自私、竞争', reversed: '和解、妥协、接受失败', advice: '寻求和平，避免冲突' },
+    { id: 55, name: '宝剑六', english: 'Six of Swords', meaning: '过渡、疗愈、旅行、离开', reversed: '不愿离开、停滞、延误', advice: '接受过渡，向前迈进' },
+    { id: 56, name: '宝剑七', english: 'Seven of Swords', meaning: '欺骗、策略、秘密、逃避', reversed: '诚实、面对现实、承担责任', advice: '保持诚实，面对现实' },
+    { id: 57, name: '宝剑八', english: 'Eight of Swords', meaning: '限制、恐惧、被困、自我怀疑', reversed: '解放、勇气、突破限制', advice: '勇敢突破，相信自己' },
+    { id: 58, name: '宝剑九', english: 'Nine of Swords', meaning: '焦虑、恐惧、失眠、内疚', reversed: '释放恐惧、疗愈、平静', advice: '面对恐惧，寻求平静' },
+    { id: 59, name: '宝剑十', english: 'Ten of Swords', meaning: '结束、痛苦、失败、背叛', reversed: '新开始、恢复、希望', advice: '接受结束，期待新开始' },
+    { id: 60, name: '宝剑骑士', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
+    { id: 61, name: '宝剑王后', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
+    { id: 62, name: '宝剑国王', english: 'Queen of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
+    { id: 63, name: '宝剑皇后', english: 'King of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
+  ],
+  pentacles: [
+    { id: 64, name: '星币一', english: 'Ace of Pentacles', meaning: '财富、新机会、物质、稳定', reversed: '错失机会、财务问题', advice: '抓住机会，谨慎理财' },
+    { id: 65, name: '星币二', english: 'Two of Pentacles', meaning: '平衡、管理、灵活性、优先级', reversed: '失衡、管理不善、压力', advice: '学会平衡，合理安排' },
+    { id: 66, name: '星币三', english: 'Three of Pentacles', meaning: '合作、技能、学习、团队', reversed: '缺乏合作、技能不足', advice: '学会合作，提升技能' },
+    { id: 67, name: '星币四', english: 'Four of Pentacles', meaning: '稳定、安全、占有欲、储蓄', reversed: '浪费、过度消费、缺乏安全感', advice: '合理储蓄，但不要吝啬' },
+    { id: 68, name: '星币五', english: 'Five of Pentacles', meaning: '财务困难、缺乏、贫困、疾病', reversed: '恢复、帮助、改善', advice: '寻求帮助，保持希望' },
+    { id: 69, name: '星币六', english: 'Six of Pentacles', meaning: '慷慨、慈善、平衡、给予', reversed: '贪婪、不公平、缺乏给予', advice: '学会给予，保持平衡' },
+    { id: 70, name: '星币七', english: 'Seven of Pentacles', meaning: '评估、反思、收获、耐心', reversed: '缺乏评估、冲动、不满', advice: '评估进展，保持耐心' },
+    { id: 71, name: '星币八', english: 'Eight of Pentacles', meaning: '技能、专注、勤奋、改进', reversed: '缺乏专注、技能不足、懒惰', advice: '专注提升，勤奋工作' },
+    { id: 72, name: '星币九', english: 'Nine of Pentacles', meaning: '独立、成功、富足、自信', reversed: '依赖、缺乏成功、不满足', advice: '享受独立，保持自信' },
+    { id: 73, name: '星币十', english: 'Ten of Pentacles', meaning: '财富、家庭、遗产、长期安全', reversed: '家庭问题、财务不稳定', advice: '重视家庭，规划未来' },
+    { id: 74, name: '星币骑士', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
+    { id: 75, name: '星币王后', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
+    { id: 76, name: '星币国王', english: 'Queen of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
+    { id: 77, name: '星币皇后', english: 'King of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
+  ]
+};
+
+let allCards = [];
+let tarotImages = {};
+let selectedCards = [];
+let cardImagesPreloaded = [];
+
+function initStarBackground() {
+  const bg = document.getElementById('star-bg');
+  const starCount = 150;
+  
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 3 + 1;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.animationDelay = `${Math.random() * 2}s`;
+    star.style.opacity = Math.random() * 0.5 + 0.3;
+    bg.appendChild(star);
+  }
+  
+  for (let i = 0; i < 5; i++) {
+    const comet = document.createElement('div');
+    comet.className = 'comet';
+    comet.style.left = `${Math.random() * 100}%`;
+    comet.style.animationDelay = `${Math.random() * 8}s`;
+    bg.appendChild(comet);
+  }
+}
+
+function typewriterEffect(element, text, speed = 50, callback) {
+  element.textContent = '';
+  let i = 0;
+  
+  function type() {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    } else if (callback) {
+      callback();
+    }
+  }
+  
+  type();
+}
+
+async function loadTarotData() {
+  try {
+    const response = await fetch(TAROT_DATA_URL);
+    const data = await response.json();
+    tarotImages = data;
+    return true;
+  } catch (error) {
+    console.error('Failed to load tarot data:', error);
+    return false;
+  }
+}
+
+function getAllCards() {
+  const cards = [...MAJOR_ARCANA];
+  
+  Object.values(MINOR_ARCANA).forEach(suite => {
+    cards.push(...suite);
+  });
+  
+  return cards;
+}
+
+function preloadCardImages() {
+  const promises = [];
+  
+  allCards.forEach(card => {
+    const imageUrl = getCardImageUrl(card);
+    if (imageUrl) {
+      const promise = new Promise((resolve) => {
+        const img = new Image();
+        img.src = imageUrl;
+        img.onload = () => {
+          console.log(`Preloaded: ${card.name}`);
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn(`Failed to preload: ${card.name}`);
+          resolve();
+        };
+      });
+      promises.push(promise);
+    }
+  });
+  
+  return Promise.all(promises);
+}
+
+function getCardImageUrl(card) {
+  let fileName = '';
+  
+  if (card.id >= 0 && card.id <= 21) {
+    const numStr = card.id.toString().padStart(2, '0');
+    const nameMap = {
+      0: 'TheFool',
+      1: 'TheMagician',
+      2: 'TheHighPriestess',
+      3: 'TheEmpress',
+      4: 'TheEmperor',
+      5: 'TheHierophant',
+      6: 'TheLovers',
+      7: 'TheChariot',
+      8: 'Strength',
+      9: 'TheHermit',
+      10: 'WheelOfFortune',
+      11: 'Justice',
+      12: 'TheHangedMan',
+      13: 'Death',
+      14: 'Temperance',
+      15: 'TheDevil',
+      16: 'TheTower',
+      17: 'TheStar',
+      18: 'TheMoon',
+      19: 'TheSun',
+      20: 'Judgement',
+      21: 'TheWorld'
+    };
+    fileName = `${numStr}-${nameMap[card.id]}.png`;
+  } else if (card.id >= 22 && card.id <= 35) {
+    const num = card.id - 21;
+    fileName = `Wands${num.toString().padStart(2, '0')}.png`;
+  } else if (card.id >= 36 && card.id <= 49) {
+    const num = card.id - 35;
+    fileName = `Cups${num.toString().padStart(2, '0')}.png`;
+  } else if (card.id >= 50 && card.id <= 63) {
+    const num = card.id - 49;
+    fileName = `Swords${num.toString().padStart(2, '0')}.png`;
+  } else if (card.id >= 64 && card.id <= 77) {
+    const num = card.id - 63;
+    fileName = `Pentacles${num.toString().padStart(2, '0')}.png`;
+  }
+  
+  if (fileName) {
+    return `https://raw.githubusercontent.com/w94stan-boop/tarot-images/main/images/Cards-png/${fileName}`;
+  }
+  
+  return null;
+}
+
+function shuffleCards() {
+  const container = document.getElementById('shuffleAnimation');
+  container.innerHTML = '';
+  
+  const cardCount = 20;
+  const cards = [];
+  
+  for (let i = 0; i < cardCount; i++) {
+    const card = document.createElement('div');
+    card.className = 'shuffle-card';
+    card.style.left = `${50 + (Math.random() - 0.5) * 60}%`;
+    card.style.top = `${50 + (Math.random() - 0.5) * 60}%`;
+    card.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg) scale(${0.6 + Math.random() * 0.4})`;
+    card.style.opacity = 0.4 + Math.random() * 0.4;
+    card.style.zIndex = Math.floor(Math.random() * 100);
+    cards.push(card);
+    container.appendChild(card);
+  }
+  
+  const duration = 4000;
+  const startTime = Date.now();
+  
+  function animate() {
+    const elapsed = Date.now() - startTime;
+    const progress = elapsed / duration;
+    
+    if (progress < 1) {
+      cards.forEach((card, index) => {
+        const baseDelay = (index / cardCount) * 0.5;
+        const cardProgress = Math.max(0, Math.min(1, (progress - baseDelay) / 0.5));
+        
+        if (cardProgress > 0) {
+          const chaos = Math.sin(cardProgress * Math.PI * 8) * 0.3;
+          const x = 50 + Math.sin(cardProgress * Math.PI * 4 + index) * 30 * (1 - cardProgress);
+          const y = 50 + Math.cos(cardProgress * Math.PI * 4 + index) * 30 * (1 - cardProgress);
+          const rotate = cardProgress * 720 + index * 30;
+          const scale = 0.6 + cardProgress * 0.4 + chaos * 0.2;
+          const opacity = 0.4 + cardProgress * 0.4;
+          
+          card.style.left = `${x}%`;
+          card.style.top = `${y}%`;
+          card.style.transform = `translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`;
+          card.style.opacity = opacity;
+          card.style.zIndex = Math.floor(cardProgress * 100);
+        }
+      });
+      
+      requestAnimationFrame(animate);
+    } else {
+      showStage(3);
+      renderCardsFan();
+    }
+  }
+  
+  animate();
+}
+
+function renderCardsFan() {
+  const container = document.getElementById('cardsFan');
+  container.innerHTML = '';
+  
+  const fanRadius = 420;
+  const startAngle = Math.PI * 0.28;
+  const endAngle = Math.PI * 0.72;
+  const angleStep = (endAngle - startAngle) / (allCards.length - 1);
+  const centerOffsetY = 0;
+  
+  allCards.forEach((card, index) => {
+    const tarotCard = document.createElement('div');
+    tarotCard.className = 'tarot-card';
+    tarotCard.dataset.cardId = card.id;
+    
+    const checkMark = document.createElement('div');
+    checkMark.className = 'check-mark';
+    checkMark.textContent = '✓';
+    tarotCard.appendChild(checkMark);
+    
+    const angle = startAngle + index * angleStep;
+    const x = 50 + Math.cos(angle) * fanRadius * 0.13;
+    const y = 50 + centerOffsetY + Math.sin(angle) * fanRadius * 0.11;
+    const rotate = (angle - Math.PI / 2) * (180 / Math.PI);
+    
+    tarotCard.style.left = `${x}%`;
+    tarotCard.style.top = `${y}%`;
+    tarotCard.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
+    tarotCard.style.zIndex = index;
+    
+    tarotCard.addEventListener('click', () => toggleCardSelection(tarotCard, card));
+    
+    container.appendChild(tarotCard);
+  });
+}
+
+function toggleCardSelection(element, card) {
+  const cardIndex = selectedCards.findIndex(c => c.id === card.id);
+  
+  if (cardIndex > -1) {
+    selectedCards.splice(cardIndex, 1);
+    element.classList.remove('selected');
+  } else {
+    if (selectedCards.length < 3) {
+      selectedCards.push(card);
+      element.classList.add('selected');
+      
+      if (selectedCards.length === 3) {
+        setTimeout(() => {
+          showResult();
+        }, 600);
+      }
+    }
+  }
+  
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  const countEl = document.getElementById('selectedCount');
+  countEl.textContent = `请选择 3 张卡牌 (${selectedCards.length}/3)`;
+}
+
+function showStage(stageNum) {
+  document.querySelectorAll('.stage').forEach(stage => {
+    stage.classList.remove('active');
+  });
+  document.getElementById(`stage${stageNum}`).classList.add('active');
+}
+
+function showResult() {
+  if (selectedCards.length === 0) return;
+  
+  console.log('showResult called with selectedCards:', selectedCards);
+  
+  const container = document.getElementById('resultCardsContainer');
+  if (!container) {
+    console.error('resultCardsContainer not found');
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  const summaries = [];
+  
+  selectedCards.forEach((card, index) => {
+    const isReversed = Math.random() > 0.5;
+    const imageUrl = getCardImageUrl(card);
+    
+    const resultCard = document.createElement('div');
+    resultCard.className = 'result-card';
+    
+    resultCard.innerHTML = `
+      <div class="result-card-image">
+        <img src="${imageUrl || ''}" alt="${card.name}" onerror="this.src=''; this.parentElement.style.background='rgba(255, 255, 255, 0.1)';">
+      </div>
+      <div class="result-card-info">
+        <div class="card-name">${index + 1}. ${card.name}</div>
+        <div class="card-english-name">${card.english}</div>
+        <div class="card-position ${isReversed ? 'card-reversed' : ''}">${isReversed ? '逆位' : '正位'}</div>
+        <div class="card-meaning-section">
+          <div class="card-meaning-title">核心含义</div>
+          <div class="card-meaning-text">${card.meaning}</div>
+        </div>
+        <div class="card-meaning-section">
+          <div class="card-meaning-title">逆位含义</div>
+          <div class="card-meaning-text">${card.reversed}</div>
+        </div>
+        <div class="card-meaning-section">
+          <div class="card-meaning-title">建议</div>
+          <div class="card-meaning-text">${card.advice}</div>
+        </div>
+      </div>
+    `;
+    
+    const img = resultCard.querySelector('img');
+    if (img && imageUrl) {
+      img.style.transform = isReversed ? 'rotate(180deg)' : 'rotate(0deg)';
+      img.onload = () => {
+        img.style.opacity = '1';
+      };
+      img.onerror = () => {
+        img.parentElement.style.background = 'rgba(255, 255, 255, 0.1)';
+      };
+    }
+    
+    container.appendChild(resultCard);
+    
+    summaries.push({
+      name: card.name,
+      isReversed,
+      meaning: isReversed ? card.reversed : card.meaning,
+      advice: card.advice
+    });
+  });
+  
+  let summaryText = '';
+  if (selectedCards.length === 1) {
+    const s = summaries[0];
+    summaryText = `抽到了${s.isReversed ? '逆位' : '正位'}的「${s.name}」。${s.isReversed ? '这暗示着' : '这代表着'}${s.meaning}。${s.advice}`;
+  } else if (selectedCards.length === 2) {
+    const s1 = summaries[0];
+    const s2 = summaries[1];
+    summaryText = `第一张：${s1.isReversed ? '逆位' : '正位'}的「${s1.name}」，${s1.isReversed ? '暗示着' : '代表着'}${s1.meaning}。第二张：${s2.isReversed ? '逆位' : '正位'}的「${s2.name}」，${s2.isReversed ? '暗示着' : '代表着'}${s2.meaning}。综合来看，${s1.advice} ${s2.advice}`;
+  } else {
+    const s1 = summaries[0];
+    const s2 = summaries[1];
+    const s3 = summaries[2];
+    summaryText = `第一张：${s1.isReversed ? '逆位' : '正位'}的「${s1.name}」，${s1.isReversed ? '暗示着' : '代表着'}${s1.meaning}。第二张：${s2.isReversed ? '逆位' : '正位'}的「${s2.name}」，${s2.isReversed ? '暗示着' : '代表着'}${s2.meaning}。第三张：${s3.isReversed ? '逆位' : '正位'}的「${s3.name}」，${s3.isReversed ? '暗示着' : '代表着'}${s3.meaning}。综合来看，${s1.advice} ${s2.advice} ${s3.advice}`;
+  }
+  
+  document.getElementById('summaryText').textContent = summaryText;
+  
+  showStage(4);
+}
+
+async function init() {
+  initStarBackground();
+  
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  
+  typewriterEffect(document.getElementById('stage1Title'), 'Phase I · The Question', 80);
+  typewriterEffect(document.getElementById('questionLabel'), '心中默念你的问题', 60);
+  
+  allCards = getAllCards();
+  
+  loadTarotData().catch(console.error);
+  
+  setTimeout(() => {
+    loadingOverlay.style.opacity = '0';
+    setTimeout(() => {
+      loadingOverlay.style.display = 'none';
+    }, 1000);
+  }, 1500);
+  
+  preloadCardImages().catch(console.error);
+  
+  document.getElementById('startBtn').addEventListener('click', () => {
+    const question = document.getElementById('questionInput').value.trim();
+    if (!question) {
+      typewriterEffect(document.getElementById('questionLabel'), '请输入你的问题', 60);
+      return;
+    }
+    
+    showStage(2);
+    shuffleCards();
+  });
+  
+  document.getElementById('backBtn').addEventListener('click', () => {
+    selectedCards = [];
+    updateSelectedCount();
+    document.querySelectorAll('.tarot-card').forEach(c => c.classList.remove('selected'));
+    showStage(1);
+    document.getElementById('questionInput').value = '';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
