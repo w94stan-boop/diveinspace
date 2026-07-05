@@ -516,7 +516,6 @@ html, body {
   height: auto;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid var(--gold-soft);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   margin-bottom: 20px;
 }
@@ -612,7 +611,8 @@ html, body {
   color: var(--text-secondary);
   line-height: 2;
   font-weight: 200;
-  text-align: center;
+  text-align: left;
+  white-space: pre-wrap;
 }
 
 .back-btn {
@@ -651,6 +651,417 @@ html, body {
   font-size: 0.85rem;
   color: var(--gold-soft);
   letter-spacing: 0.2em;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 8, 16, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px;
+}
+
+.modal-close:hover {
+  color: var(--gold);
+}
+
+.modal-body {
+  padding: 25px 30px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: 'Noto Sans SC', sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 168, 83, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-select option {
+  background: var(--space-blue);
+  color: var(--text-primary);
+}
+
+.form-range {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+}
+
+.form-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-weight: 200;
+}
+
+.form-intro {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border-left: 3px solid var(--gold);
+}
+
+.cors-warning {
+  font-size: 0.75rem;
+  color: #ff9800;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  padding: 12px 15px;
+  background: rgba(255, 152, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+.cors-warning code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+
+.radio-group {
+  display: flex;
+  gap: 30px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  position: relative;
+}
+
+.radio-label input[type="radio"] {
+  display: none;
+}
+
+.radio-indicator {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.radio-label input[type="radio"]:checked + .radio-indicator {
+  border-color: var(--gold);
+}
+
+.radio-label input[type="radio"]:checked + .radio-indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.form-status {
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  display: none;
+}
+
+.form-status.success {
+  display: block;
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.form-status.error {
+  display: block;
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #ef5350;
+}
+
+.form-status.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 152, 0, 0.15);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  color: #ff9800;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.3), rgba(212, 168, 83, 0.1));
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.4), rgba(212, 168, 83, 0.2));
+  box-shadow: 0 0 30px rgba(212, 168, 83, 0.3);
+}
+
+.settings-btn-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.settings-btn {
+  width: 45px;
+  height: 45px;
+  background: rgba(10, 15, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.settings-btn:hover {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-footer {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  padding: 20px 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.ai-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  margin-top: 10px;
+}
+
+.ai-status-enabled {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.ai-status-disabled {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+  border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+.generating-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--gold);
+}
+
+.generating-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: generatingPulse 1s ease-in-out infinite;
+}
+
+.generating-dot:nth-child(2) { animation-delay: 0.2s; }
+.generating-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes generatingPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.ai-status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+  color: #ef5350;
+  transition: all 0.3s ease;
+}
+
+.ai-status-indicator.enabled {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.ai-status-indicator.loading {
+  background: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.3);
+  color: #ff9800;
+}
+
+.ai-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef5350;
+  transition: all 0.3s ease;
+}
+
+.ai-status-indicator.enabled .ai-status-dot {
+  background: #4caf50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.ai-status-indicator.loading .ai-status-dot {
+  background: #ff9800;
+  animation: generatingPulse 1s ease-in-out infinite;
+}
+
+.ai-status-text {
+  font-weight: 300;
+}
+
+.error-message {
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+  color: #ef5350;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
@@ -726,19 +1137,27 @@ html, body {
   <div class="loading-text">命运之轮转动中...</div>
 </div>
 
+<div class="settings-btn-container">
+  <button class="settings-btn" id="aiSettingsBtn" title="配置AI连接">⚙</button>
+</div>
+
 <div class="stage active" id="stage1">
   <div class="stage1-content">
-    <div class="phase-title" id="stage1Title">Phase I · The Question</div>
+    <div class="phase-title" id="stage1Title">THE QUESTION</div>
     <div class="question-label" id="questionLabel">心中默念你的问题</div>
     <textarea class="question-input" id="questionInput" placeholder="请输入你想问的问题..." rows="4"></textarea>
     <div class="input-hint">清晰的问题将引导你找到答案</div>
+    <div class="ai-status-indicator" id="aiStatusIndicator">
+      <span class="ai-status-dot" id="aiStatusDot"></span>
+      <span class="ai-status-text" id="aiStatusText">AI解读未启用</span>
+    </div>
     <button class="btn" id="startBtn" style="margin-top: 30px;">开始抽卡</button>
   </div>
 </div>
 
 <div class="stage" id="stage2">
   <div class="shuffle-container">
-    <div class="phase-title">Phase II · The Shuffle</div>
+    <div class="phase-title">SHUFFLING 凝神专注……默念你的问题</div>
     <div class="shuffle-animation" id="shuffleAnimation"></div>
     <div class="shuffle-text" id="shuffleText">正在洗牌...</div>
     <div class="shuffle-dots">
@@ -752,8 +1171,8 @@ html, body {
 <div class="stage" id="stage3">
   <div class="stage3-content">
     <div class="stage3-header">
-      <div class="phase-title">Phase III · The Selection</div>
-      <div class="question-label">请选择1-3张卡牌</div>
+      <div class="phase-title">CHOOSE YOUR CARDS</div>
+      <div class="question-label">请选择3张卡牌</div>
     </div>
     <div class="cards-fan-container">
       <div class="cards-fan" id="cardsFan"></div>
@@ -766,7 +1185,7 @@ html, body {
 
 <div class="stage" id="stage4">
   <div class="stage4-content">
-    <div class="phase-title">Phase IV · The Revelation</div>
+    <div class="phase-title">The Revelation</div>
     <div class="result-cards-container" id="resultCardsContainer"></div>
     <div class="reading-summary">
       <div class="summary-title">Reading Summary</div>
@@ -776,8 +1195,357 @@ html, body {
   </div>
 </div>
 
+<div class="modal-overlay" id="aiSettingsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">连接至叙事引擎</h3>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-intro">
+        在开始之前，需要连接一个AI大模型来充当解读师。你的API密钥仅保存在本地浏览器中。
+      </div>
+      
+      <div class="cors-warning">
+        ⚠️ <strong>注意</strong>：如果遇到"Failed to fetch"错误，可能是浏览器跨域限制导致。建议使用本地服务器运行网站（如 <code>python -m http.server</code>）。
+      </div>
+      
+      <div class="form-group">
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="apiType" value="domestic" checked>
+            <span class="radio-indicator"></span>
+            中国国内 API
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="apiType" value="custom">
+            <span class="radio-indicator"></span>
+            自定义连接
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">服务商</label>
+        <select class="form-select" id="aiProvider">
+          <option value="openai">OpenAI (GPT-4o)</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="tongyi">通义千问</option>
+          <option value="doubao">豆包</option>
+          <option value="deepseek">深度求索</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">API 端点</label>
+        <input type="text" class="form-input" id="apiEndpoint" placeholder="https://api.example.com/v1/chat/completions" value="https://api.openai.com/v1/chat/completions">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">API Key</label>
+        <input type="password" class="form-input" id="apiKeyInput" placeholder="请输入你的API密钥">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">模型</label>
+        <input type="text" class="form-input" id="aiModel" placeholder="gpt-4o" value="gpt-4o">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">温度参数</label>
+        <input type="range" class="form-range" id="aiTemperature" min="0" max="2" step="0.1" value="0.7">
+        <div class="form-hint">较低的值生成更精确的内容，较高的值生成更多创意内容</div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">最大输出长度</label>
+        <select class="form-select" id="aiMaxTokens">
+          <option value="500">简短 (500字)</option>
+          <option value="1000">中等 (1000字)</option>
+          <option value="2000">详细 (2000字)</option>
+        </select>
+      </div>
+      
+      <div class="form-status" id="apiTestStatus"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="testConnectionBtn">测试连接</button>
+      <button class="btn btn-primary" id="saveAiSettingsBtn">保存并继续</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const TAROT_DATA_URL = 'https://raw.githubusercontent.com/w94stan-boop/tarot-images/main/images/manifest.json';
+
+const AI_CONFIG_KEY = 'tarot_ai_config';
+
+const DEFAULT_AI_CONFIG = {
+  provider: 'openai',
+  apiType: 'custom',
+  apiEndpoint: 'https://api.openai.com/v1/chat/completions',
+  apiKey: '',
+  model: 'gpt-4o',
+  temperature: 0.7,
+  maxTokens: 1000
+};
+
+function getAiConfig() {
+  try {
+    const saved = localStorage.getItem(AI_CONFIG_KEY);
+    return saved ? JSON.parse(saved) : DEFAULT_AI_CONFIG;
+  } catch {
+    return DEFAULT_AI_CONFIG;
+  }
+}
+
+function saveAiConfig(config) {
+  try {
+    localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+  } catch (e) {
+    console.error('Failed to save AI config:', e);
+  }
+}
+
+function updateAiStatusIndicator() {
+  const config = getAiConfig();
+  const indicator = document.getElementById('aiStatusIndicator');
+  const textEl = document.getElementById('aiStatusText');
+  
+  if (!indicator || !textEl) return;
+  
+  if (config.apiKey && config.apiEndpoint) {
+    indicator.className = 'ai-status-indicator enabled';
+    textEl.textContent = 'AI解读已启用';
+  } else {
+    indicator.className = 'ai-status-indicator';
+    textEl.textContent = 'AI解读未启用 - 点击⚙配置API';
+  }
+}
+
+async function callOpenAI(prompt, config) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${config.apiKey}`
+  };
+
+  const body = {
+    model: config.model,
+    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。' }, { role: 'user', content: prompt }],
+    temperature: parseFloat(config.temperature),
+    max_tokens: parseInt(config.maxTokens),
+    stream: true
+  };
+
+  return fetch(config.apiEndpoint || 'https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(60000)
+  });
+}
+
+async function callGemini(prompt, config) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  const body = {
+    contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
+    generationConfig: {
+      temperature: parseFloat(config.temperature),
+      maxOutputTokens: parseInt(config.maxTokens)
+    }
+  };
+
+  const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
+  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
+  const separator = endpoint.includes('?') ? '&' : '?';
+  
+  return fetch(`${endpoint}${separator}key=${config.apiKey}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(60000)
+  });
+}
+
+async function testApiConnection(config) {
+  try {
+    let headers = {
+      'Content-Type': 'application/json'
+    };
+    
+    let body;
+    let endpoint = config.apiEndpoint;
+    
+    if (config.provider === 'gemini') {
+      body = {
+        contents: [{ parts: [{ text: '测试连接' }] }],
+        generationConfig: {
+          maxOutputTokens: 10
+        }
+      };
+      const separator = endpoint.includes('?') ? '&' : '?';
+      endpoint = `${endpoint}${separator}key=${config.apiKey}`;
+    } else {
+      headers['Authorization'] = `Bearer ${config.apiKey}`;
+      body = {
+        model: config.model,
+        messages: [{ role: 'user', content: '测试连接' }],
+        max_tokens: 10,
+        stream: false
+      };
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000),
+      mode: 'cors'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      return { success: false, message: errorData?.error?.message || `连接失败: HTTP ${response.status}` };
+    }
+
+    const data = await response.json();
+    if (data.choices && data.choices.length > 0) {
+      return { success: true, message: '连接成功！API密钥有效。' };
+    } else if (data.candidates && data.candidates.length > 0) {
+      return { success: true, message: '连接成功！API密钥有效。' };
+    } else {
+      return { success: false, message: '连接失败: 响应格式不正确' };
+    }
+  } catch (error) {
+    let errorMessage = `连接失败: ${error.message}`;
+    
+    if (error.message === 'Failed to fetch') {
+      errorMessage = '连接失败：无法访问API。这可能是由于浏览器跨域限制（CORS）。建议：\n1. 使用本地服务器运行网站\n2. 或使用CORS代理\n3. 或在浏览器中安装CORS插件临时解决';
+    } else if (error.message.includes('CORS')) {
+      errorMessage = '连接失败：浏览器跨域限制（CORS）阻止了请求。建议使用本地服务器运行网站。';
+    } else if (error.message.includes('timeout')) {
+      errorMessage = '连接失败：请求超时。请检查网络连接或尝试使用其他服务商。';
+    }
+    
+    return { success: false, message: errorMessage };
+  }
+}
+
+async function streamApi(prompt, config, onChunk, onError) {
+  const maxRetries = 3;
+  let retryCount = 0;
+  
+  while (retryCount < maxRetries) {
+    try {
+      let response;
+      
+      if (config.provider === 'gemini') {
+        response = await callGemini(prompt, config);
+      } else {
+        response = await callOpenAI(prompt, config);
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const errorMessage = errorData?.error?.message || `HTTP错误 ${response.status}`;
+        
+        if (response.status === 429) {
+          throw new Error('API调用频率超限，请稍后重试');
+        } else if (response.status === 401) {
+          throw new Error('API密钥无效，请检查设置');
+        } else if (response.status >= 500) {
+          throw new Error(`服务器错误: ${errorMessage}`);
+        } else {
+          throw new Error(errorMessage);
+        }
+      }
+      
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        
+        if (config.provider !== 'gemini') {
+          const lines = chunk.split('\n').filter(line => line.trim());
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.substring(6);
+              if (data === '[DONE]') continue;
+              try {
+                const json = JSON.parse(data);
+                const content = json.choices?.[0]?.delta?.content;
+                if (content) onChunk(content);
+              } catch {
+                continue;
+              }
+            }
+          }
+        } else {
+          try {
+            const json = JSON.parse(chunk);
+            const content = json.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (content) onChunk(content);
+          } catch {
+            continue;
+          }
+        }
+      }
+      
+      return;
+      
+    } catch (error) {
+      retryCount++;
+      
+      if (error.name === 'TimeoutError') {
+        if (retryCount < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+          continue;
+        }
+        onError('请求超时，请检查网络连接');
+      } else if (error.name === 'AbortError') {
+        onError('请求被取消');
+        return;
+      } else if (error.message.includes('API密钥无效') || error.message.includes('401')) {
+        onError('API密钥无效，请检查设置');
+        return;
+      } else {
+        if (retryCount < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+          continue;
+        }
+        onError(`AI调用失败: ${error.message}`);
+      }
+    }
+  }
+}
+
+function buildTarotPrompt(question, summaries) {
+  const cardDetails = summaries.map((s, i) => {
+    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」：${s.meaning}`;
+  }).join('\n');
+
+  return `用户的问题：${question}
+
+抽到的三张塔罗牌：
+${cardDetails}
+
+请基于以上卡牌组合，为用户提供一次深度的塔罗牌解读。要求：
+
+1. 整体分析：解读这三张牌共同构成的能量和信息
+2. 主题解读：分析当前的主题和潜在的趋势
+3. 心理洞察：从心理学角度提供深度洞察
+4. 实用建议：给出具体、可操作的建议
+
+请用温暖、神秘且富有洞察力的语言，避免简单的信息罗列，提供有深度的综合分析。`;
+}
 
 const MAJOR_ARCANA = [
   { id: 0, name: '愚者', english: 'The Fool', meaning: '新的开始、冒险、天真无邪、自由精神', reversed: '鲁莽、冒险失败、缺乏方向', advice: '勇敢迈出第一步，但保持清醒的头脑' },
@@ -1166,6 +1934,9 @@ function showResult() {
     const resultCard = document.createElement('div');
     resultCard.className = 'result-card';
     
+    const meaningTitle = isReversed ? '逆位含义' : '核心含义';
+    const meaningText = isReversed ? card.reversed : card.meaning;
+    
     resultCard.innerHTML = `
       <div class="result-card-image">
         <img src="${imageUrl || ''}" alt="${card.name}" onerror="this.src=''; this.parentElement.style.background='rgba(255, 255, 255, 0.1)';">
@@ -1173,18 +1944,10 @@ function showResult() {
       <div class="result-card-info">
         <div class="card-name">${index + 1}. ${card.name}</div>
         <div class="card-english-name">${card.english}</div>
-        <div class="card-position ${isReversed ? 'card-reversed' : ''}">${isReversed ? '逆位' : '正位'}</div>
+        <div class="card-position">${isReversed ? '逆位' : '正位'}</div>
         <div class="card-meaning-section">
-          <div class="card-meaning-title">核心含义</div>
-          <div class="card-meaning-text">${card.meaning}</div>
-        </div>
-        <div class="card-meaning-section">
-          <div class="card-meaning-title">逆位含义</div>
-          <div class="card-meaning-text">${card.reversed}</div>
-        </div>
-        <div class="card-meaning-section">
-          <div class="card-meaning-title">建议</div>
-          <div class="card-meaning-text">${card.advice}</div>
+          <div class="card-meaning-title">${meaningTitle}</div>
+          <div class="card-meaning-text">${meaningText}</div>
         </div>
       </div>
     `;
@@ -1210,24 +1973,152 @@ function showResult() {
     });
   });
   
-  let summaryText = '';
-  if (selectedCards.length === 1) {
-    const s = summaries[0];
-    summaryText = `抽到了${s.isReversed ? '逆位' : '正位'}的「${s.name}」。${s.isReversed ? '这暗示着' : '这代表着'}${s.meaning}。${s.advice}`;
-  } else if (selectedCards.length === 2) {
-    const s1 = summaries[0];
-    const s2 = summaries[1];
-    summaryText = `第一张：${s1.isReversed ? '逆位' : '正位'}的「${s1.name}」，${s1.isReversed ? '暗示着' : '代表着'}${s1.meaning}。第二张：${s2.isReversed ? '逆位' : '正位'}的「${s2.name}」，${s2.isReversed ? '暗示着' : '代表着'}${s2.meaning}。综合来看，${s1.advice} ${s2.advice}`;
+  showStage(4);
+  
+  const aiConfig = getAiConfig();
+  const summaryTextEl = document.getElementById('summaryText');
+  
+  if (aiConfig.apiKey && aiConfig.apiEndpoint) {
+    const question = document.getElementById('questionInput').value.trim();
+    const prompt = buildTarotPrompt(question, summaries);
+    
+    summaryTextEl.innerHTML = `
+      <div class="generating-indicator">
+        <div class="generating-dot"></div>
+        <div class="generating-dot"></div>
+        <div class="generating-dot"></div>
+        AI正在进行深度解读...
+      </div>
+    `;
+    
+    let generatedText = '';
+    
+    streamApi(prompt, aiConfig, (chunk) => {
+      generatedText += chunk;
+      summaryTextEl.textContent = generatedText;
+    }, (error) => {
+      let errorMsg = error;
+      let suggestion = '';
+      
+      if (error.includes('401') || error.includes('密钥无效')) {
+        errorMsg = 'API密钥无效或已过期';
+        suggestion = '建议：请点击右上角⚙重新配置API密钥。';
+      } else if (error.includes('429') || error.includes('频率超限')) {
+        errorMsg = 'API调用频率超限';
+        suggestion = '建议：请稍后再试，或升级您的API套餐。';
+      } else if (error.includes('CORS') || error.includes('Failed to fetch')) {
+        errorMsg = '浏览器跨域限制阻止了请求';
+        suggestion = '建议：使用本地服务器运行网站（如 python -m http.server），或安装CORS插件。';
+      } else if (error.includes('timeout')) {
+        errorMsg = '请求超时';
+        suggestion = '建议：检查网络连接，或尝试使用其他服务商。';
+      }
+      
+      const fallbackText = generateComprehensiveReading(summaries);
+      summaryTextEl.innerHTML = `
+        <div class="error-message">⚠️ AI解读失败：${errorMsg}</div>
+        ${suggestion ? `<div style="margin-top: 10px; color: #ff9800; font-size: 0.8rem;">${suggestion}</div>` : ''}
+        <div style="margin-top: 15px;">${fallbackText}</div>
+      `;
+    });
   } else {
-    const s1 = summaries[0];
-    const s2 = summaries[1];
-    const s3 = summaries[2];
-    summaryText = `第一张：${s1.isReversed ? '逆位' : '正位'}的「${s1.name}」，${s1.isReversed ? '暗示着' : '代表着'}${s1.meaning}。第二张：${s2.isReversed ? '逆位' : '正位'}的「${s2.name}」，${s2.isReversed ? '暗示着' : '代表着'}${s2.meaning}。第三张：${s3.isReversed ? '逆位' : '正位'}的「${s3.name}」，${s3.isReversed ? '暗示着' : '代表着'}${s3.meaning}。综合来看，${s1.advice} ${s2.advice} ${s3.advice}`;
+    const summaryText = generateComprehensiveReading(summaries);
+    summaryTextEl.innerHTML = `
+      <div style="color: #ff9800; font-size: 0.85rem; margin-bottom: 15px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-radius: 8px;">
+        ⚠️ AI解读功能未启用。点击右上角⚙配置API密钥以获得AI深度解读体验。
+      </div>
+      ${summaryText}
+    `;
+  }
+}
+
+function generateComprehensiveReading(summaries) {
+  const cardNames = summaries.map(s => `${s.isReversed ? '逆位' : '正位'}「${s.name}」`).join('、');
+  const cardIds = summaries.map(s => {
+    const card = allCards.find(c => c.name === s.name);
+    return card ? card.id : 0;
+  });
+  
+  const cardCombinations = {
+    '0-1': '新的开始需要创造力来实现',
+    '0-2': '在冒险中保持直觉和神秘的指引',
+    '1-2': '创造力与直觉的完美结合',
+    '3-4': '丰饶与权威的平衡',
+    '5-6': '传统与爱的抉择',
+    '7-8': '意志力需要内在力量支撑',
+    '9-10': '内省带来命运的转变',
+    '11-12': '正义需要牺牲精神',
+    '13-14': '结束与节制带来新的平衡',
+    '15-16': '从束缚中觉醒',
+    '17-18': '希望与潜意识的连接',
+    '19-20': '成功需要觉醒与召唤',
+    '21-0': '完成意味着新的开始',
+    '22-36': '行动与情感的平衡',
+    '22-50': '行动与思想的结合',
+    '22-64': '行动与物质的追求',
+    '36-50': '情感与思想的交织',
+    '36-64': '情感与物质的平衡',
+    '50-64': '思想与物质的整合',
+    'default': '这些卡牌共同揭示了你当前的处境和潜在的路径'
+  };
+  
+  function getCombinationKey(cardIds) {
+    const sortedIds = [...cardIds].sort((a, b) => a - b);
+    const key = sortedIds.join('-');
+    return cardCombinations[key] || cardCombinations['default'];
   }
   
-  document.getElementById('summaryText').textContent = summaryText;
+  const combinationInsight = getCombinationKey(cardIds);
   
-  showStage(4);
+  const insights = [
+    '这组卡牌的组合揭示了一个深层的信息：',
+    '当前的能量正在发生微妙的转变，',
+    '你需要关注内心的声音和周围的信号，',
+    '这些卡牌的排列暗示着一个重要的转折点，',
+    '相信直觉，跟随内心的指引前行，',
+    '每一张卡牌都在讲述一个独特的故事，',
+    '它们共同编织了一幅完整的画面，',
+    '在变化中保持平衡，在挑战中寻找机遇'
+  ];
+  
+  const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+  
+  const elements = {
+    wands: { name: '火', meaning: '行动、热情、能量' },
+    cups: { name: '水', meaning: '情感、直觉、关系' },
+    swords: { name: '风', meaning: '思想、沟通、逻辑' },
+    pentacles: { name: '土', meaning: '物质、稳定、安全' },
+    major: { name: '灵', meaning: '灵性、命运、转变' }
+  };
+  
+  const elementAnalysis = summaries.map(s => {
+    const card = allCards.find(c => c.name === s.name);
+    let element = 'major';
+    if (card && card.id >= 22 && card.id <= 35) element = 'wands';
+    else if (card && card.id >= 36 && card.id <= 49) element = 'cups';
+    else if (card && card.id >= 50 && card.id <= 63) element = 'swords';
+    else if (card && card.id >= 64 && card.id <= 77) element = 'pentacles';
+    return elements[element];
+  });
+  
+  const uniqueElements = [...new Set(elementAnalysis.map(e => e.name))];
+  const elementMeanings = uniqueElements.map(e => {
+    const key = e === '火' ? 'wands' : e === '水' ? 'cups' : e === '风' ? 'swords' : e === '土' ? 'pentacles' : 'major';
+    return `${e}元素(${elements[key].meaning})`;
+  }).join('、');
+  
+  let reading = `【综合分析】\n\n`;
+  reading += `抽到的卡牌：${cardNames}\n\n`;
+  reading += `${randomInsight}\n\n`;
+  reading += `${combinationInsight}\n\n`;
+  reading += `从元素角度来看，这组卡牌涉及${elementMeanings}的能量组合。\n\n`;
+  reading += `这些元素的互动暗示着你当前需要关注的重点领域。\n\n`;
+  reading += `【核心建议】\n`;
+  summaries.forEach((s) => {
+    reading += `• ${s.advice}\n`;
+  });
+  
+  return reading;
 }
 
 async function init() {
@@ -1235,7 +2126,7 @@ async function init() {
   
   const loadingOverlay = document.getElementById('loadingOverlay');
   
-  typewriterEffect(document.getElementById('stage1Title'), 'Phase I · The Question', 80);
+  typewriterEffect(document.getElementById('stage1Title'), 'THE QUESTION', 80);
   typewriterEffect(document.getElementById('questionLabel'), '心中默念你的问题', 60);
   
   allCards = getAllCards();
@@ -1251,6 +2142,86 @@ async function init() {
   
   preloadCardImages().catch(console.error);
   
+  const aiSettingsModal = document.getElementById('aiSettingsModal');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const saveAiSettingsBtn = document.getElementById('saveAiSettingsBtn');
+  const testConnectionBtn = document.getElementById('testConnectionBtn');
+  const aiProvider = document.getElementById('aiProvider');
+  const apiEndpoint = document.getElementById('apiEndpoint');
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  const aiModel = document.getElementById('aiModel');
+  const aiTemperature = document.getElementById('aiTemperature');
+  const aiMaxTokens = document.getElementById('aiMaxTokens');
+  const apiTestStatus = document.getElementById('apiTestStatus');
+  const radioDomestic = document.querySelector('input[name="apiType"][value="domestic"]');
+  const radioCustom = document.querySelector('input[name="apiType"][value="custom"]');
+  
+  const providerEndpoints = {
+    openai: 'https://api.openai.com/v1/chat/completions',
+    gemini: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent',
+    tongyi: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+    doubao: 'https://api.doubao.com/v1/chat/completions',
+    deepseek: 'https://api.deepseek.com/v1/chat/completions'
+  };
+  
+  const providerModels = {
+    openai: 'gpt-4o',
+    gemini: 'gemini-1.5-flash-latest',
+    tongyi: 'qwen-plus',
+    doubao: 'doubao-pro',
+    deepseek: 'deepseek-chat'
+  };
+  
+  function updateEndpointAndModel() {
+    const provider = aiProvider.value;
+    if (providerEndpoints[provider]) {
+      apiEndpoint.value = providerEndpoints[provider];
+    }
+    if (providerModels[provider]) {
+      aiModel.value = providerModels[provider];
+    }
+  }
+  
+  function loadAiSettings() {
+    const config = getAiConfig();
+    aiProvider.value = config.provider;
+    apiEndpoint.value = config.apiEndpoint || providerEndpoints[config.provider] || '';
+    apiKeyInput.value = config.apiKey || '';
+    aiModel.value = config.model || providerModels[config.provider] || '';
+    aiTemperature.value = config.temperature;
+    aiMaxTokens.value = config.maxTokens;
+    
+    if (config.apiType === 'domestic') {
+      radioDomestic.checked = true;
+    } else {
+      radioCustom.checked = true;
+    }
+    
+    updateEndpointAndModel();
+  }
+  
+  function openAiSettings() {
+    loadAiSettings();
+    apiTestStatus.style.display = 'none';
+    aiSettingsModal.classList.add('active');
+  }
+  
+  function closeAiSettings() {
+    aiSettingsModal.classList.remove('active');
+  }
+  
+  function startReading() {
+    const question = document.getElementById('questionInput').value.trim();
+    if (!question) {
+      typewriterEffect(document.getElementById('questionLabel'), '请输入你的问题', 60);
+      return;
+    }
+    
+    closeAiSettings();
+    showStage(2);
+    shuffleCards();
+  }
+  
   document.getElementById('startBtn').addEventListener('click', () => {
     const question = document.getElementById('questionInput').value.trim();
     if (!question) {
@@ -1258,8 +2229,19 @@ async function init() {
       return;
     }
     
-    showStage(2);
-    shuffleCards();
+    const config = getAiConfig();
+    if (!config.apiKey || !config.apiEndpoint) {
+      const confirmUseLocal = confirm('尚未配置AI连接，将使用本地解读功能。是否继续？\n\n建议：点击右上角⚙配置API密钥以获得AI深度解读体验。');
+      if (confirmUseLocal) {
+        showStage(2);
+        shuffleCards();
+      } else {
+        openAiSettings();
+      }
+    } else {
+      showStage(2);
+      shuffleCards();
+    }
   });
   
   document.getElementById('backBtn').addEventListener('click', () => {
@@ -1269,6 +2251,84 @@ async function init() {
     showStage(1);
     document.getElementById('questionInput').value = '';
   });
+  
+  modalCloseBtn.addEventListener('click', closeAiSettings);
+  
+  const aiSettingsBtn = document.getElementById('aiSettingsBtn');
+  aiSettingsBtn.addEventListener('click', openAiSettings);
+  
+  aiSettingsModal.addEventListener('click', (e) => {
+    if (e.target === aiSettingsModal) {
+      closeAiSettings();
+    }
+  });
+  
+  aiProvider.addEventListener('change', updateEndpointAndModel);
+  
+  radioDomestic.addEventListener('change', () => {
+    aiProvider.value = 'tongyi';
+    updateEndpointAndModel();
+  });
+  
+  radioCustom.addEventListener('change', () => {
+    aiProvider.value = 'openai';
+    updateEndpointAndModel();
+  });
+  
+  testConnectionBtn.addEventListener('click', async () => {
+    const config = {
+      provider: aiProvider.value,
+      apiEndpoint: apiEndpoint.value.trim(),
+      apiKey: apiKeyInput.value.trim(),
+      model: aiModel.value.trim()
+    };
+    
+    apiTestStatus.style.display = '';
+    
+    if (!config.apiKey) {
+      apiTestStatus.className = 'form-status error';
+      apiTestStatus.textContent = '请输入API密钥';
+      return;
+    }
+    
+    if (!config.apiEndpoint) {
+      apiTestStatus.className = 'form-status error';
+      apiTestStatus.textContent = '请输入API端点';
+      return;
+    }
+    
+    apiTestStatus.className = 'form-status loading';
+    apiTestStatus.innerHTML = '<div class="generating-dot"></div><div class="generating-dot"></div><div class="generating-dot"></div> 正在测试连接...';
+    
+    const result = await testApiConnection(config);
+    
+    if (result.success) {
+      apiTestStatus.className = 'form-status success';
+      apiTestStatus.textContent = result.message;
+    } else {
+      apiTestStatus.className = 'form-status error';
+      apiTestStatus.textContent = result.message;
+    }
+  });
+  
+  saveAiSettingsBtn.addEventListener('click', () => {
+    const config = {
+      provider: aiProvider.value,
+      apiType: radioDomestic.checked ? 'domestic' : 'custom',
+      apiEndpoint: apiEndpoint.value.trim(),
+      apiKey: apiKeyInput.value.trim(),
+      model: aiModel.value.trim(),
+      temperature: parseFloat(aiTemperature.value),
+      maxTokens: parseInt(aiMaxTokens.value)
+    };
+    
+    saveAiConfig(config);
+    updateAiStatusIndicator();
+    closeAiSettings();
+  });
+  
+  loadAiSettings();
+  updateAiStatusIndicator();
 }
 
 document.addEventListener('DOMContentLoaded', init);
