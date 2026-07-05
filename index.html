@@ -1319,9 +1319,11 @@ function updateAiStatusIndicator() {
     textEl.textContent = 'AI解读已启用';
   } else {
     indicator.className = 'ai-status-indicator';
-    textEl.textContent = 'AI解读未启用 - 点击⚙配置API';
+    textEl.textContent = '灵视未开启 - 点击开启灵视';
   }
 }
+
+const PROXY_URL = '/api.php';
 
 async function callOpenAI(prompt, config) {
   const headers = {
@@ -1330,17 +1332,19 @@ async function callOpenAI(prompt, config) {
 
   const requestBody = {
     model: config.model,
-    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。' }, { role: 'user', content: prompt }],
+    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长从塔罗牌牌义分析问题并进行答案分析和建议指引。请用简洁且专业的语言进行解读。' }, { role: 'user', content: prompt }],
     temperature: parseFloat(config.temperature),
     max_tokens: parseInt(config.maxTokens),
     stream: true
   };
 
-  return fetch('/api/proxy', {
+  const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
+  
+  return fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: config.apiEndpoint || 'https://api.openai.com/v1/chat/completions',
+      url: targetUrl,
       headers: headers,
       body: requestBody
     }),
@@ -1362,7 +1366,7 @@ async function callGemini(prompt, config) {
     }
   };
 
-  return fetch('/api/proxy', {
+  return fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1376,7 +1380,7 @@ async function callGemini(prompt, config) {
 
 async function testApiConnection(config) {
   try {
-    let customHeaders = {};
+    let customHeaders = { 'Content-Type': 'application/json' };
     let body;
     let endpoint = config.apiEndpoint;
     
@@ -1399,7 +1403,7 @@ async function testApiConnection(config) {
       };
     }
 
-    const response = await fetch('/api/proxy', {
+    const response = await fetch(PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
