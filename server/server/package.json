@@ -1,7 +1,7 @@
 {
-  "name": "star-orbit-resonance-server",
+  "name": "tarot-reading-server",
   "version": "1.0.0",
-  "description": "星轨共鸣 - 智能匹配平台后端服务",
+  "description": "塔罗牌抽卡网站后端服务",
   "main": "server.js",
   "engines": {
     "node": "18.x"
