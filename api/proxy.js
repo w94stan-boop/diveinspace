@@ -1,12 +1,22 @@
-export default async function handler(req, res) {
+export const config = {
+  runtime: 'edge'
+};
+
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
-  const { url: targetUrl, headers: customHeaders, body: requestBody } = req.body;
+  const { url: targetUrl, headers: customHeaders, body: requestBody } = await req.json();
 
   if (!targetUrl || !requestBody) {
-    return res.status(400).json({ error: 'Missing required parameters' });
+    return new Response(JSON.stringify({ error: 'Missing required parameters' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   try {
@@ -22,23 +32,15 @@ export default async function handler(req, res) {
       redirect: 'follow'
     });
 
-    res.status(response.status);
-    
-    response.headers.forEach((value, key) => {
-      if (key.toLowerCase() !== 'content-length' && key.toLowerCase() !== 'transfer-encoding') {
-        res.setHeader(key, value);
-      }
+    return new Response(response.body, {
+      status: response.status,
+      headers: response.headers
     });
 
-    const reader = response.body.getReader();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(value);
-    }
-    res.end();
-
   } catch (error) {
-    res.status(500).json({ error: 'Proxy request failed: ' + error.message });
+    return new Response(JSON.stringify({ error: 'Proxy request failed: ' + error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
