@@ -4,7 +4,7 @@
   "description": "塔罗牌抽卡网站",
   "main": "server/server.js",
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node server/server.js",
