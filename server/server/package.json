@@ -1,19 +1,21 @@
 {
-  "name": "tarot-reading-server",
+  "name": "tarot-reading",
   "version": "1.0.0",
-  "description": "塔罗牌抽卡网站后端服务",
-  "main": "server.js",
+  "description": "塔罗牌抽卡网站",
+  "main": "server/server.js",
   "engines": {
     "node": "18.x"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
-    "uuid": "^9.0.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "tar": "^7.5.19",
+    "unzipper": "^0.12.5",
+    "uuid": "^9.0.0"
   }
 }
