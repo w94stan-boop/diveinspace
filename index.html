@@ -1327,7 +1327,7 @@ async function callOpenAI(prompt, config) {
   const body = {
     endpoint: config.apiEndpoint || 'https://api.openai.com/v1/chat/completions',
     apiKey: config.apiKey,
-    body: {
+    proxyBody: {
       model: config.model,
       messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。' }, { role: 'user', content: prompt }],
       temperature: parseFloat(config.temperature),
@@ -1348,12 +1348,12 @@ async function callOpenAI(prompt, config) {
 
 async function callGemini(prompt, config) {
   const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
-  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${config.apiKey}`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
   
   const body = {
     endpoint: endpoint,
     apiKey: config.apiKey,
-    body: {
+    proxyBody: {
       contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
       generationConfig: {
         temperature: parseFloat(config.temperature),
@@ -1378,12 +1378,12 @@ async function testApiConnection(config) {
     
     if (config.provider === 'gemini') {
       const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
-      const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${config.apiKey}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
       
       proxyBody = {
         endpoint: endpoint,
         apiKey: config.apiKey,
-        body: {
+        proxyBody: {
           contents: [{ parts: [{ text: '测试连接' }] }],
           generationConfig: {
             maxOutputTokens: 10
@@ -1394,7 +1394,7 @@ async function testApiConnection(config) {
       proxyBody = {
         endpoint: config.apiEndpoint || 'https://api.openai.com/v1/chat/completions',
         apiKey: config.apiKey,
-        body: {
+        proxyBody: {
           model: config.model,
           messages: [{ role: 'user', content: '测试连接' }],
           max_tokens: 10,
