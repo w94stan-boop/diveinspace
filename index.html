@@ -1323,14 +1323,14 @@ function updateAiStatusIndicator() {
   }
 }
 
-const PROXY_URL = '/api.php';
+const PROXY_URL = 'https://bitter-flower-8a1b.w94stan.workers.dev';
 
 async function callOpenAI(prompt, config) {
   const headers = {
     'Authorization': `Bearer ${config.apiKey}`
   };
 
-  const requestBody = {
+  const body = {
     model: config.model,
     messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长从塔罗牌牌义分析问题并进行答案分析和建议指引。请用简洁且专业的语言进行解读。' }, { role: 'user', content: prompt }],
     temperature: parseFloat(config.temperature),
@@ -1346,7 +1346,7 @@ async function callOpenAI(prompt, config) {
     body: JSON.stringify({
       url: targetUrl,
       headers: headers,
-      body: requestBody
+      body: body
     }),
     signal: AbortSignal.timeout(60000)
   });
