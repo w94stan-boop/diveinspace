@@ -1,24 +1,13 @@
 {
   "rewrites": [
     {
-      "source": "/api/openai/(.*)",
-      "destination": "https://api.openai.com/v1/$1"
-    },
-    {
-      "source": "/api/gemini/(.*)",
-      "destination": "https://generativelanguage.googleapis.com/v1/$1"
-    },
-    {
-      "source": "/api/tongyi/(.*)",
-      "destination": "https://dashscope.aliyuncs.com/compatible-mode/v1/$1"
-    },
-    {
-      "source": "/api/doubao/(.*)",
-      "destination": "https://ark.cn-beijing.volces.com/api/v3/$1"
-    },
-    {
-      "source": "/api/deepseek/(.*)",
-      "destination": "https://api.deepseek.com/v1/$1"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
-  ]
+  ],
+  "functions": {
+    "api/[...all].js": {
+      "runtime": "@vercel/node@3"
+    }
+  }
 }
