@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/proxy.js": {
-      "runtime": "@vercel/edge"
+      "runtime": "edge"
     }
   }
 }
