@@ -1324,49 +1324,47 @@ function updateAiStatusIndicator() {
 }
 
 async function callOpenAI(prompt, config) {
-  const body = {
-    endpoint: config.apiEndpoint || 'https://api.openai.com/v1/chat/completions',
-    apiKey: config.apiKey,
-    proxyBody: {
-      model: config.model,
-      messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。' }, { role: 'user', content: prompt }],
-      temperature: parseFloat(config.temperature),
-      max_tokens: parseInt(config.maxTokens),
-      stream: true
-    }
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${config.apiKey}`
   };
 
-  return fetch('/api/ai/proxy', {
+  const body = {
+    model: config.model,
+    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。' }, { role: 'user', content: prompt }],
+    temperature: parseFloat(config.temperature),
+    max_tokens: parseInt(config.maxTokens),
+    stream: true
+  };
+
+  return fetch(config.apiEndpoint || 'https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(60000)
   });
 }
 
 async function callGemini(prompt, config) {
-  const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
-  const endpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
-  
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
   const body = {
-    endpoint: endpoint,
-    apiKey: config.apiKey,
-    proxyBody: {
-      contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
-      generationConfig: {
-        temperature: parseFloat(config.temperature),
-        maxOutputTokens: parseInt(config.maxTokens)
-      }
+    contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
+    generationConfig: {
+      temperature: parseFloat(config.temperature),
+      maxOutputTokens: parseInt(config.maxTokens)
     }
   };
 
-  return fetch('/api/ai/proxy', {
+  const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
+  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
+  const separator = endpoint.includes('?') ? '&' : '?';
+  
+  return fetch(`${endpoint}${separator}key=${config.apiKey}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(60000)
   });
@@ -1374,42 +1372,38 @@ async function callGemini(prompt, config) {
 
 async function testApiConnection(config) {
   try {
-    let proxyBody;
+    let headers = {
+      'Content-Type': 'application/json'
+    };
+    
+    let body;
+    let endpoint = config.apiEndpoint;
     
     if (config.provider === 'gemini') {
-      const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash-latest';
-      const endpoint = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
-      
-      proxyBody = {
-        endpoint: endpoint,
-        apiKey: config.apiKey,
-        proxyBody: {
-          contents: [{ parts: [{ text: '测试连接' }] }],
-          generationConfig: {
-            maxOutputTokens: 10
-          }
+      body = {
+        contents: [{ parts: [{ text: '测试连接' }] }],
+        generationConfig: {
+          maxOutputTokens: 10
         }
       };
+      const separator = endpoint.includes('?') ? '&' : '?';
+      endpoint = `${endpoint}${separator}key=${config.apiKey}`;
     } else {
-      proxyBody = {
-        endpoint: config.apiEndpoint || 'https://api.openai.com/v1/chat/completions',
-        apiKey: config.apiKey,
-        proxyBody: {
-          model: config.model,
-          messages: [{ role: 'user', content: '测试连接' }],
-          max_tokens: 10,
-          stream: false
-        }
+      headers['Authorization'] = `Bearer ${config.apiKey}`;
+      body = {
+        model: config.model,
+        messages: [{ role: 'user', content: '测试连接' }],
+        max_tokens: 10,
+        stream: false
       };
     }
 
-    const response = await fetch('/api/ai/proxy', {
+    const response = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(proxyBody),
-      signal: AbortSignal.timeout(15000)
+      headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000),
+      mode: 'cors'
     });
 
     if (!response.ok) {
@@ -1429,9 +1423,9 @@ async function testApiConnection(config) {
     let errorMessage = `连接失败: ${error.message}`;
     
     if (error.message === 'Failed to fetch') {
-      errorMessage = '连接失败：无法访问代理服务器。请检查网络连接或稍后再试。';
+      errorMessage = '连接失败：无法访问API。这可能是由于浏览器跨域限制（CORS）。建议：\n1. 使用本地服务器运行网站\n2. 或使用CORS代理\n3. 或在浏览器中安装CORS插件临时解决';
     } else if (error.message.includes('CORS')) {
-      errorMessage = '连接失败：跨域限制。请确保网站已正确部署。';
+      errorMessage = '连接失败：浏览器跨域限制（CORS）阻止了请求。建议使用本地服务器运行网站。';
     } else if (error.message.includes('timeout')) {
       errorMessage = '连接失败：请求超时。请检查网络连接或尝试使用其他服务商。';
     }
