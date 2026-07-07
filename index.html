@@ -2779,9 +2779,9 @@ const QUESTION_TYPES = [
   {
     id: 'future',
     name: '未来发展',
-    description: '关于未来方向、人生规划的问题',
-    keywords: ['未来', '规划', '方向', '前途', '命运', '人生', '目标', '梦想', '愿望', '选择', '决定', '机会', '挑战', '转变', '新开始'],
-    relatedKeywords: ['道路', '旅程', '方向', '可能性', '机遇', '成长']
+    description: '关于未来方向、人生规划、时间运势的问题',
+    keywords: ['未来', '规划', '方向', '前途', '命运', '人生', '目标', '梦想', '愿望', '选择', '决定', '机会', '挑战', '转变', '新开始', '一周', '运势', '运程', '本周', '下周', '明天', '后天', '今年', '明年', '近期', '短期', '长期', '最近', '即将'],
+    relatedKeywords: ['道路', '旅程', '方向', '可能性', '机遇', '成长', '时间', '期限', '发展']
   },
   {
     id: 'decision',
@@ -3051,10 +3051,13 @@ function analyzeQuestion(question) {
   };
 }
 
-function matchSpread(questionType) {
+function matchSpread(questionType, question = '') {
   if (!questionType) {
     return TAROT_SPREADS.find(s => s.id === 'three-card');
   }
+  
+  const timeKeywords = ['一周', '本周', '下周', '明天', '后天', '昨天', '今天', '今年', '明年', '本月', '下月', '近期', '短期', '长期', '最近', '即将', '未来'];
+  const hasTimeKeyword = timeKeywords.some(kw => question.includes(kw));
   
   const suitableSpreads = TAROT_SPREADS.filter(spread => 
     spread.suitableFor.includes(questionType.id)
@@ -3062,6 +3065,11 @@ function matchSpread(questionType) {
   
   if (suitableSpreads.length === 0) {
     return TAROT_SPREADS.find(s => s.id === 'three-card');
+  }
+  
+  if (hasTimeKeyword && questionType.id === 'future') {
+    const timelineSpread = suitableSpreads.find(s => s.id === 'timeline');
+    if (timelineSpread) return timelineSpread;
   }
   
   suitableSpreads.sort((a, b) => {
@@ -3079,7 +3087,7 @@ function matchSpread(questionType) {
 
 function getSpreadSuggestions(question) {
   const analysis = analyzeQuestion(question);
-  const spread = matchSpread(analysis.type);
+  const spread = matchSpread(analysis.type, question);
   
   return {
     analysis: analysis,
