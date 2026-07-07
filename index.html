@@ -237,6 +237,168 @@ html, body {
   background: rgba(5, 8, 16, 0.95);
 }
 
+.spread-select-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.spread-select-label {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+  letter-spacing: 0.1em;
+}
+
+.spread-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.spread-card-item {
+  background: rgba(10, 15, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.spread-card-item:hover {
+  border-color: rgba(212, 168, 83, 0.5);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(212, 168, 83, 0.15);
+}
+
+.spread-card-item.selected {
+  border-color: var(--gold);
+  background: rgba(212, 168, 83, 0.1);
+  box-shadow: 0 0 30px rgba(212, 168, 83, 0.3);
+}
+
+.spread-card-item.selected .spread-card-name {
+  color: var(--gold);
+}
+
+.spread-card-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.spread-card-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.spread-card-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 0.75rem;
+}
+
+.spread-card-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(212, 168, 83, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: var(--gold);
+}
+
+.spread-card-complexity {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: var(--text-secondary);
+}
+
+.spread-card-complexity .star {
+  color: var(--gold);
+}
+
+.spread-card-positions {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.spread-card-position-title {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.spread-card-position-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spread-card-position-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+}
+
+.spread-card-position-index {
+  width: 20px;
+  height: 20px;
+  background: rgba(212, 168, 83, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.spread-card-position-name {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.spread-card-position-meaning {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
 .shuffle-container {
   position: relative;
   width: 100%;
@@ -941,6 +1103,286 @@ html, body {
   transform: rotate(90deg);
 }
 
+.history-btn-container {
+  position: fixed;
+  top: 20px;
+  right: 75px;
+  z-index: 1000;
+}
+
+.history-btn {
+  width: 45px;
+  height: 45px;
+  background: rgba(10, 15, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.history-btn:hover {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+}
+
+.history-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--gold);
+  color: var(--bg-dark);
+  font-size: 0.65rem;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.history-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+.history-modal.active {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+.history-modal-content {
+  max-width: 900px;
+  margin: 40px auto;
+  width: 90%;
+  background: rgba(10, 15, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.history-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+}
+
+.history-back-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-back-btn:hover {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold);
+  transform: scale(1.05);
+}
+
+.history-back-btn:active {
+  transform: scale(0.95);
+}
+
+.history-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  color: var(--gold);
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.history-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  background: rgba(10, 15, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 8px 15px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-select:focus {
+  border-color: var(--gold);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.history-item {
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  border-color: rgba(212, 168, 83, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.history-item-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.history-item-question {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.history-item-cards {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.history-card-mini {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 0.8rem;
+}
+
+.history-card-mini .card-name-mini {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.history-card-mini .card-position-mini {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.history-item-summary {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid var(--gold);
+}
+
+.history-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.pagination-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 .modal-footer {
   display: flex;
   gap: 15px;
@@ -1141,6 +1583,55 @@ html, body {
   <button class="settings-btn" id="aiSettingsBtn" title="配置AI连接">⚙</button>
 </div>
 
+<div class="history-btn-container">
+  <button class="history-btn" id="historyBtn" title="抽卡历史">📜</button>
+  <span class="history-badge" id="historyBadge" style="display: none;">0</span>
+</div>
+
+<div class="history-modal" id="historyModal">
+  <div class="history-modal-content">
+    <div class="history-modal-header">
+      <div class="history-modal-title">抽卡历史记录</div>
+      <button class="history-back-btn" id="historyBackBtn" title="返回">←</button>
+    </div>
+    <div class="history-stats" id="historyStats">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">总抽卡次数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statCards">0</div>
+        <div class="stat-label">总卡牌数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statMajor">0</div>
+        <div class="stat-label">大阿卡纳</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statMinor">0</div>
+        <div class="stat-label">小阿卡纳</div>
+      </div>
+    </div>
+    <div class="history-filters">
+      <select class="filter-select" id="filterSuit">
+        <option value="">全部花色</option>
+        <option value="major">大阿卡纳</option>
+        <option value="wands">权杖</option>
+        <option value="cups">圣杯</option>
+        <option value="swords">宝剑</option>
+        <option value="pentacles">星币</option>
+      </select>
+      <select class="filter-select" id="filterPosition">
+        <option value="">全部位置</option>
+        <option value="upright">正位</option>
+        <option value="reversed">逆位</option>
+      </select>
+    </div>
+    <div class="history-list" id="historyList"></div>
+    <div class="history-pagination" id="historyPagination"></div>
+  </div>
+</div>
+
 <div class="stage active" id="stage1">
   <div class="stage1-content">
     <div class="phase-title" id="stage1Title">THE QUESTION</div>
@@ -1151,11 +1642,20 @@ html, body {
       <span class="ai-status-dot" id="aiStatusDot"></span>
       <span class="ai-status-text" id="aiStatusText">AI解读未启用</span>
     </div>
-    <button class="btn" id="startBtn" style="margin-top: 30px;">开始抽卡</button>
+    <button class="btn" id="startBtn" style="margin-top: 30px;">选择牌阵</button>
   </div>
 </div>
 
 <div class="stage" id="stage2">
+  <div class="spread-select-container">
+    <div class="phase-title">CHOOSE YOUR SPREAD</div>
+    <div class="spread-select-label">选择一个牌阵进行占卜</div>
+    <div class="spread-grid" id="spreadGrid"></div>
+    <button class="btn back-btn" id="spreadBackBtn">返回修改问题</button>
+  </div>
+</div>
+
+<div class="stage" id="stage3">
   <div class="shuffle-container">
     <div class="phase-title">SHUFFLING 凝神专注……默念你的问题</div>
     <div class="shuffle-animation" id="shuffleAnimation"></div>
@@ -1168,11 +1668,11 @@ html, body {
   </div>
 </div>
 
-<div class="stage" id="stage3">
+<div class="stage" id="stage4">
   <div class="stage3-content">
     <div class="stage3-header">
       <div class="phase-title">CHOOSE YOUR CARDS</div>
-      <div class="question-label">请选择3张卡牌</div>
+      <div class="question-label" id="stage3QuestionLabel">请选择3张卡牌</div>
     </div>
     <div class="cards-fan-container">
       <div class="cards-fan" id="cardsFan"></div>
@@ -1183,7 +1683,7 @@ html, body {
   </div>
 </div>
 
-<div class="stage" id="stage4">
+<div class="stage" id="stage5">
   <div class="stage4-content">
     <div class="phase-title">The Revelation</div>
     <div class="result-cards-container" id="resultCardsContainer"></div>
@@ -1442,7 +1942,7 @@ async function testApiConnection(config) {
   }
 }
 
-async function streamApi(prompt, config, onChunk, onError) {
+async function streamApi(prompt, config, onChunk, onError, onComplete) {
   const maxRetries = 3;
   let retryCount = 0;
   
@@ -1507,6 +2007,7 @@ async function streamApi(prompt, config, onChunk, onError) {
         }
       }
       
+      if (onComplete) onComplete();
       return;
       
     } catch (error) {
@@ -1842,12 +2343,82 @@ function shuffleCards() {
       
       requestAnimationFrame(animate);
     } else {
-      showStage(3);
+      showStage(4);
+      updateSelectedCount();
       renderCardsFan();
     }
   }
   
   animate();
+}
+
+function renderSpreadGrid() {
+  const container = document.getElementById('spreadGrid');
+  container.innerHTML = '';
+  
+  TAROT_SPREADS.forEach(spread => {
+    const spreadItem = document.createElement('div');
+    spreadItem.className = 'spread-card-item';
+    spreadItem.dataset.spreadId = spread.id;
+    
+    const complexityStars = '★'.repeat(spread.complexity) + '☆'.repeat(3 - spread.complexity);
+    
+    const positionsHtml = spread.positions.slice(0, 4).map(pos => `
+      <div class="spread-card-position-item">
+        <div class="spread-card-position-index">${pos.index + 1}</div>
+        <div>
+          <div class="spread-card-position-name">${pos.name}</div>
+          <div class="spread-card-position-meaning">${pos.meaning}</div>
+        </div>
+      </div>
+    `).join('');
+    
+    spreadItem.innerHTML = `
+      <div class="spread-card-name">${spread.name}</div>
+      <div class="spread-card-description">${spread.description}</div>
+      <div class="spread-card-info">
+        <div class="spread-card-count">
+          <span>📦</span>
+          <span>${spread.cardCount}张牌</span>
+        </div>
+        <div class="spread-card-complexity">
+          <span class="star">${complexityStars}</span>
+        </div>
+      </div>
+      <div class="spread-card-positions">
+        <div class="spread-card-position-title">位置含义</div>
+        <div class="spread-card-position-list">
+          ${positionsHtml}
+        </div>
+        ${spread.positions.length > 4 ? '<div style="font-size:0.65rem;color:var(--text-muted);margin-top:8px;">...还有更多位置</div>' : ''}
+      </div>
+    `;
+    
+    spreadItem.addEventListener('click', () => {
+      document.querySelectorAll('.spread-card-item').forEach(item => item.classList.remove('selected'));
+      spreadItem.classList.add('selected');
+      
+      currentSpread = spread;
+      
+      setTimeout(() => {
+        const config = getAiConfig();
+        if (!config.apiKey || !config.apiEndpoint) {
+          const confirmUseLocal = confirm('尚未配置AI连接，将使用本地解读功能。是否继续？\n\n建议：点击右上角⚙配置API密钥以获得AI深度解读体验。');
+          if (confirmUseLocal) {
+            showStage(3);
+            shuffleCards();
+          } else {
+            openAiSettings();
+          }
+        } else {
+          showStage(3);
+          shuffleCards();
+        }
+      }, 300);
+    });
+    
+    container.appendChild(spreadItem);
+  });
 }
 
 function renderCardsFan() {
@@ -1981,7 +2552,14 @@ function showResult() {
     });
   });
   
-  showStage(4);
+  const question = document.getElementById('questionInput').value.trim();
+  saveReadingHistory({
+    question: question,
+    cards: summaries,
+    summary: ''
+  });
+  
+  showStage(5);
   
   const aiConfig = getAiConfig();
   const summaryTextEl = document.getElementById('summaryText');
@@ -2028,6 +2606,9 @@ function showResult() {
         ${suggestion ? `<div style="margin-top: 10px; color: #ff9800; font-size: 0.8rem;">${suggestion}</div>` : ''}
         <div style="margin-top: 15px;">${fallbackText}</div>
       `;
+      updateLastHistorySummary(fallbackText);
+    }, () => {
+      updateLastHistorySummary(generatedText);
     });
   } else {
     const summaryText = generateComprehensiveReading(summaries);
@@ -2037,7 +2618,211 @@ function showResult() {
       </div>
       ${summaryText}
     `;
+    updateLastHistorySummary(summaryText);
   }
+}
+
+const HISTORY_KEY = 'tarot_reading_history';
+const HISTORY_PAGE_SIZE = 5;
+
+let currentHistoryPage = 1;
+let currentFilters = { suit: '', position: '' };
+let previousStage = 1;
+
+function getReadingHistory() {
+  try {
+    const data = localStorage.getItem(HISTORY_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error('Failed to get reading history:', e);
+    return [];
+  }
+}
+
+function saveReadingHistory(reading) {
+  try {
+    const history = getReadingHistory();
+    history.unshift({
+      id: Date.now(),
+      timestamp: Date.now(),
+      question: reading.question,
+      cards: reading.cards,
+      summary: reading.summary || ''
+    });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    updateHistoryBadge();
+  } catch (e) {
+    console.error('Failed to save reading history:', e);
+  }
+}
+
+function updateLastHistorySummary(summary) {
+  try {
+    const history = getReadingHistory();
+    if (history.length > 0) {
+      history[0].summary = summary;
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+  } catch (e) {
+    console.error('Failed to update history summary:', e);
+  }
+}
+
+function updateHistoryBadge() {
+  const history = getReadingHistory();
+  const badge = document.getElementById('historyBadge');
+  if (badge) {
+    if (history.length > 0) {
+      badge.textContent = history.length > 99 ? '99+' : history.length;
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
+function getCardSuit(cardName) {
+  const majorNames = MAJOR_ARCANA.map(c => c.name);
+  if (majorNames.includes(cardName)) return 'major';
+  if (cardName.includes('权杖')) return 'wands';
+  if (cardName.includes('圣杯')) return 'cups';
+  if (cardName.includes('宝剑')) return 'swords';
+  if (cardName.includes('星币')) return 'pentacles';
+  return 'major';
+}
+
+function filterHistory(history, filters) {
+  return history.filter(record => {
+    if (filters.suit) {
+      const hasSuit = record.cards.some(card => getCardSuit(card.name) === filters.suit);
+      if (!hasSuit) return false;
+    }
+    if (filters.position) {
+      const isReversed = filters.position === 'reversed';
+      const hasPosition = record.cards.some(card => card.isReversed === isReversed);
+      if (!hasPosition) return false;
+    }
+    return true;
+  });
+}
+
+function calculateStats(history) {
+  let totalCards = 0;
+  let majorCount = 0;
+  let minorCount = 0;
+  
+  history.forEach(record => {
+    totalCards += record.cards.length;
+    record.cards.forEach(card => {
+      const suit = getCardSuit(card.name);
+      if (suit === 'major') majorCount++;
+      else minorCount++;
+    });
+  });
+  
+  return {
+    totalReadings: history.length,
+    totalCards,
+    majorCount,
+    minorCount
+  };
+}
+
+function formatTime(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now - date;
+  
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
+  
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function renderHistory() {
+  const history = getReadingHistory();
+  const filteredHistory = filterHistory(history, currentFilters);
+  const stats = calculateStats(filteredHistory);
+  
+  document.getElementById('statTotal').textContent = stats.totalReadings;
+  document.getElementById('statCards').textContent = stats.totalCards;
+  document.getElementById('statMajor').textContent = stats.majorCount;
+  document.getElementById('statMinor').textContent = stats.minorCount;
+  
+  const listEl = document.getElementById('historyList');
+  const paginationEl = document.getElementById('historyPagination');
+  
+  if (filteredHistory.length === 0) {
+    listEl.innerHTML = '<div class="history-empty">暂无历史记录</div>';
+    paginationEl.innerHTML = '';
+    return;
+  }
+  
+  const totalPages = Math.ceil(filteredHistory.length / HISTORY_PAGE_SIZE);
+  if (currentHistoryPage > totalPages) currentHistoryPage = totalPages;
+  
+  const startIndex = (currentHistoryPage - 1) * HISTORY_PAGE_SIZE;
+  const pageData = filteredHistory.slice(startIndex, startIndex + HISTORY_PAGE_SIZE);
+  
+  listEl.innerHTML = pageData.map(record => `
+    <div class="history-item">
+      <div class="history-item-header">
+        <div class="history-item-time">${formatTime(record.timestamp)}</div>
+      </div>
+      <div class="history-item-question">问题：${record.question || '未记录'}</div>
+      <div class="history-item-cards">
+        ${record.cards.map(card => `
+          <div class="history-card-mini">
+            <div class="card-name-mini">${card.name}</div>
+            <div class="card-position-mini">${card.isReversed ? '逆位' : '正位'}</div>
+          </div>
+        `).join('')}
+      </div>
+      ${record.summary ? `<div class="history-item-summary">${record.summary}</div>` : ''}
+    </div>
+  `).join('');
+  
+  if (totalPages > 1) {
+    paginationEl.innerHTML = `
+      <button class="pagination-btn" ${currentHistoryPage === 1 ? 'disabled' : ''} onclick="changeHistoryPage(-1)">上一页</button>
+      <span class="pagination-info">${currentHistoryPage} / ${totalPages}</span>
+      <button class="pagination-btn" ${currentHistoryPage === totalPages ? 'disabled' : ''} onclick="changeHistoryPage(1)">下一页</button>
+    `;
+  } else {
+    paginationEl.innerHTML = '';
+  }
+}
+
+function changeHistoryPage(delta) {
+  currentHistoryPage += delta;
+  renderHistory();
+}
+
+function openHistory() {
+  previousStage = getCurrentStage();
+  currentHistoryPage = 1;
+  currentFilters = { suit: '', position: '' };
+  document.getElementById('filterSuit').value = '';
+  document.getElementById('filterPosition').value = '';
+  renderHistory();
+  document.getElementById('historyModal').classList.add('active');
+}
+
+function closeHistory() {
+  document.getElementById('historyModal').classList.remove('active');
+  showStage(previousStage);
+}
+
+function getCurrentStage() {
+  const stages = document.querySelectorAll('.stage');
+  for (let i = 0; i < stages.length; i++) {
+    if (stages[i].classList.contains('active')) {
+      return i + 1;
+    }
+  }
+  return 1;
 }
 
 function generateComprehensiveReading(summaries) {
@@ -2237,23 +3022,17 @@ async function init() {
       return;
     }
     
-    const config = getAiConfig();
-    if (!config.apiKey || !config.apiEndpoint) {
-      const confirmUseLocal = confirm('尚未配置AI连接，将使用本地解读功能。是否继续？\n\n建议：点击右上角⚙配置API密钥以获得AI深度解读体验。');
-      if (confirmUseLocal) {
-        showStage(2);
-        shuffleCards();
-      } else {
-        openAiSettings();
-      }
-    } else {
-      showStage(2);
-      shuffleCards();
-    }
+    renderSpreadGrid();
+    showStage(2);
+  });
+  
+  document.getElementById('spreadBackBtn').addEventListener('click', () => {
+    showStage(1);
   });
   
   document.getElementById('backBtn').addEventListener('click', () => {
     selectedCards = [];
+    currentSpread = null;
     updateSelectedCount();
     document.querySelectorAll('.tarot-card').forEach(c => c.classList.remove('selected'));
     showStage(1);
@@ -2264,6 +3043,21 @@ async function init() {
   
   const aiSettingsBtn = document.getElementById('aiSettingsBtn');
   aiSettingsBtn.addEventListener('click', openAiSettings);
+  
+  document.getElementById('historyBtn').addEventListener('click', openHistory);
+  document.getElementById('historyBackBtn').addEventListener('click', closeHistory);
+  document.getElementById('filterSuit').addEventListener('change', (e) => {
+    currentFilters.suit = e.target.value;
+    currentHistoryPage = 1;
+    renderHistory();
+  });
+  document.getElementById('filterPosition').addEventListener('change', (e) => {
+    currentFilters.position = e.target.value;
+    currentHistoryPage = 1;
+    renderHistory();
+  });
+  
+  updateHistoryBadge();
   
   aiSettingsModal.addEventListener('click', (e) => {
     if (e.target === aiSettingsModal) {
