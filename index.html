@@ -1996,7 +1996,45 @@ async function callOpenAI(prompt, config) {
 
   const body = {
     model: config.model,
-    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长从塔罗牌牌义分析问题并进行答案分析和建议指引。请用简洁且专业的语言进行解读。' }, { role: 'user', content: prompt }],
+    messages: [{ 
+      role: 'system', 
+      content: `你是一位拥有20年经验的专业塔罗牌大师，精通韦特塔罗、透特塔罗等多种体系。你的解读风格神秘、温暖、富有洞察力，能够深入用户的内心世界，揭示命运的奥秘。
+
+【解读风格指南】
+- 语言风格：优雅、神秘、诗意，避免生硬机械
+- 深度层次：从表面到深层，层层递进
+- 情感基调：温暖关怀，给予希望和指引
+- 专业程度：具备心理学知识，提供深度心理洞察
+
+【输出格式要求】
+请按照以下结构进行解读，每个部分用小标题分隔：
+
+✨ 能量总览
+分析三张牌共同构成的能量场和整体氛围
+
+🎯 核心讯息
+揭示当前最关键的信息和主题
+
+🌊 趋势洞察
+分析未来的发展趋势和可能的变化
+
+💡 心理启示
+从心理学角度提供深度洞察和自我认知
+
+🔮 行动建议
+给出3条具体、可操作的建议
+
+🌙 灵魂寄语
+用一句话作为温暖的结语
+
+【禁忌事项】
+- 避免简单罗列每张牌的含义
+- 不要使用过于学术化或生硬的语言
+- 不要做出绝对化的预言
+- 避免负面或令人恐惧的表述
+
+请用你的智慧和直觉，为用户提供一次难忘的塔罗牌解读体验。` 
+    }, { role: 'user', content: prompt }],
     temperature: parseFloat(config.temperature),
     max_tokens: parseInt(config.maxTokens),
     stream: true
@@ -2076,7 +2114,44 @@ async function callGemini(prompt, config) {
   const targetUrl = `${endpoint}${separator}key=${config.apiKey}`;
 
   const requestBody = {
-    contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
+    contents: [{ parts: [{ text: `你是一位拥有20年经验的专业塔罗牌大师，精通韦特塔罗、透特塔罗等多种体系。你的解读风格神秘、温暖、富有洞察力，能够深入用户的内心世界，揭示命运的奥秘。
+
+【解读风格指南】
+- 语言风格：优雅、神秘、诗意，避免生硬机械
+- 深度层次：从表面到深层，层层递进
+- 情感基调：温暖关怀，给予希望和指引
+- 专业程度：具备心理学知识，提供深度心理洞察
+
+【输出格式要求】
+请按照以下结构进行解读，每个部分用小标题分隔：
+
+✨ 能量总览
+分析三张牌共同构成的能量场和整体氛围
+
+🎯 核心讯息
+揭示当前最关键的信息和主题
+
+🌊 趋势洞察
+分析未来的发展趋势和可能的变化
+
+💡 心理启示
+从心理学角度提供深度洞察和自我认知
+
+🔮 行动建议
+给出3条具体、可操作的建议
+
+🌙 灵魂寄语
+用一句话作为温暖的结语
+
+【禁忌事项】
+- 避免简单罗列每张牌的含义
+- 不要使用过于学术化或生硬的语言
+- 不要做出绝对化的预言
+- 避免负面或令人恐惧的表述
+
+请用你的智慧和直觉，为用户提供一次难忘的塔罗牌解读体验。
+
+用户问题：${prompt}` }] }],
     generationConfig: {
       temperature: parseFloat(config.temperature),
       maxOutputTokens: parseInt(config.maxTokens)
@@ -2339,22 +2414,21 @@ async function streamApi(prompt, config, onChunk, onError) {
 
 function buildTarotPrompt(question, summaries) {
   const cardDetails = summaries.map((s, i) => {
-    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」：${s.meaning}`;
+    const positionNames = ['当前状态', '挑战/阻碍', '结果/指引'];
+    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」【${positionNames[i]}】：${s.meaning}`;
   }).join('\n');
 
-  return `用户的问题：${question}
+  return `用户的问题：${question || '未提出具体问题'}
 
-抽到的三张塔罗牌：
+抽到的三张塔罗牌及其位置含义：
 ${cardDetails}
 
-请基于以上卡牌组合，为用户提供一次深度的塔罗牌解读。要求：
+【位置说明】
+- 第一张：代表当前的状态和能量
+- 第二张：代表面临的挑战或需要注意的问题
+- 第三张：代表未来的可能性和指引
 
-1. 整体分析：解读这三张牌共同构成的能量和信息
-2. 主题解读：分析当前的主题和潜在的趋势
-3. 心理洞察：从心理学角度提供深度洞察
-4. 实用建议：给出具体、可操作的建议
-
-请用温暖、神秘且富有洞察力的语言，避免简单的信息罗列，提供有深度的综合分析。`;
+请结合用户的问题和三张牌的组合，进行一次深度的塔罗牌解读。`;
 }
 
 const MAJOR_ARCANA = [
