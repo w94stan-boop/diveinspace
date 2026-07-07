@@ -1016,6 +1016,45 @@ html, body {
 .history-header {
   text-align: center;
   margin-bottom: 40px;
+  position: relative;
+}
+
+.history-back-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+  background: rgba(10, 15, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.history-back-btn:hover {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.history-back-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.history-back-btn .back-arrow {
+  transition: transform 0.3s ease;
+}
+
+.history-back-btn:hover .back-arrow {
+  transform: translateX(-3px);
 }
 
 .history-header h2 {
@@ -1452,6 +1491,16 @@ html, body {
   .card-meaning-text {
     font-size: 0.85rem;
   }
+  
+  .history-back-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+  
+  .history-header h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>
 </head>
@@ -1528,6 +1577,9 @@ html, body {
 <div class="stage" id="stage5">
   <div class="stage5-content">
     <div class="history-header">
+      <button class="history-back-btn" id="historyBackBtn" title="返回">
+        <span class="back-arrow">←</span>
+      </button>
       <h2>抽卡历史记录</h2>
       <p>探索你的命运轨迹</p>
     </div>
@@ -1881,7 +1933,15 @@ function goToHistoryPage(page) {
   renderHistory();
 }
 
+let previousStage = 1;
+
 function openHistory() {
+  document.querySelectorAll('.stage').forEach((stage, index) => {
+    if (stage.classList.contains('active')) {
+      previousStage = index + 1;
+    }
+  });
+  
   currentHistoryPage = 1;
   currentFilters = { suit: '', position: '' };
   document.getElementById('filterSuit').value = '';
@@ -1891,7 +1951,7 @@ function openHistory() {
 }
 
 function closeHistory() {
-  showStage(1);
+  showStage(previousStage);
 }
 
 function updateAiStatusIndicator() {
@@ -1913,7 +1973,9 @@ function updateAiStatusIndicator() {
 const PROXY_URLS = [
   'https://bitter-flower-8a1b.w94stan.workers.dev',
   'https://corsproxy.io/?',
-  'https://api.allorigins.win/raw'
+  'https://api.allorigins.win/raw',
+  'https://cors-anywhere.herokuapp.com/',
+  'https://api.codetabs.com/v1/proxy?quest='
 ];
 
 let currentProxyIndex = 0;
@@ -1941,6 +2003,30 @@ async function callOpenAI(prompt, config) {
   };
 
   const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
+  
+  const domesticProviders = ['tongyi', 'doubao', 'deepseek'];
+  const isDomestic = domesticProviders.includes(config.provider);
+  
+  if (isDomestic) {
+    try {
+      console.log(`尝试直接调用国内API: ${config.provider} -> ${targetUrl}`);
+      const response = await fetch(targetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...headers },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(60000)
+      });
+      
+      console.log(`直接调用响应状态: ${response.status}`);
+      
+      if (response.ok) return response;
+      
+      const errorText = await response.text().catch(() => '');
+      console.log(`直接调用失败，响应内容: ${errorText}`);
+    } catch (err) {
+      console.log(`直接调用失败: ${err.message}`);
+    }
+  }
   
   for (let i = 0; i < PROXY_URLS.length; i++) {
     try {
@@ -2061,6 +2147,30 @@ async function testApiConnection(config) {
         max_tokens: 10,
         stream: false
       };
+    }
+
+    const domesticProviders = ['tongyi', 'doubao', 'deepseek'];
+    const isDomestic = domesticProviders.includes(config.provider);
+    
+    if (isDomestic) {
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...customHeaders },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(15000)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.choices && data.choices.length > 0) {
+            return { success: true, message: '连接成功！API密钥有效。' };
+          } else {
+            return { success: false, message: '连接失败: 响应格式不正确' };
+          }
+        }
+      } catch {
+      }
     }
 
     let response;
@@ -3052,6 +3162,11 @@ async function init() {
   const historyBtn = document.getElementById('historyBtn');
   if (historyBtn) {
     historyBtn.addEventListener('click', openHistory);
+  }
+  
+  const historyBackBtn = document.getElementById('historyBackBtn');
+  if (historyBackBtn) {
+    historyBackBtn.addEventListener('click', closeHistory);
   }
   
   const filterSuit = document.getElementById('filterSuit');
