@@ -233,145 +233,6 @@ html, body {
   font-weight: 200;
 }
 
-.spread-recommendation {
-  margin-top: 25px;
-  padding: 25px;
-  background: rgba(10, 15, 30, 0.6);
-  border: 1px solid rgba(212, 168, 83, 0.3);
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  animation: fadeInUp 0.5s ease;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.recommendation-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.recommendation-icon {
-  font-size: 1.5rem;
-}
-
-.recommendation-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  color: var(--gold);
-  letter-spacing: 0.1em;
-}
-
-.spread-card {
-  margin-bottom: 15px;
-}
-
-.spread-name {
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.spread-description {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-
-.spread-cards {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--gold);
-  background: rgba(212, 168, 83, 0.1);
-  padding: 6px 14px;
-  border-radius: 20px;
-  margin-bottom: 15px;
-}
-
-.spread-positions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-.spread-position-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 0.75rem;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-
-.spread-position-index {
-  width: 22px;
-  height: 22px;
-  background: var(--gold);
-  color: var(--deep-space);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  flex-shrink: 0;
-}
-
-.spread-position-name {
-  color: var(--gold);
-  font-weight: 500;
-  margin-bottom: 3px;
-}
-
-.spread-position-meaning {
-  color: var(--text-secondary);
-  font-size: 0.7rem;
-}
-
-.question-type-tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  color: var(--text-primary);
-  background: rgba(212, 168, 83, 0.15);
-  border: 1px solid rgba(212, 168, 83, 0.3);
-  padding: 6px 16px;
-  border-radius: 20px;
-  margin-bottom: 15px;
-}
-
-.recommendation-suggestions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.recommendation-suggestions div {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.recommendation-suggestions .suggestion-icon {
-  color: var(--gold);
-  font-size: 0.8rem;
-}
-
 #stage2 {
   background: rgba(5, 8, 16, 0.95);
 }
@@ -685,20 +546,6 @@ html, body {
   color: var(--text-muted);
   letter-spacing: 0.2em;
   margin-bottom: 15px;
-  font-style: italic;
-}
-
-.card-spread-position {
-  font-size: 0.75rem;
-  color: var(--gold);
-  font-weight: 500;
-  margin-top: 8px;
-}
-
-.card-spread-position-meaning {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  margin-bottom: 5px;
   font-style: italic;
 }
 
@@ -1112,371 +959,6 @@ html, body {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-.history-btn-container {
-  position: fixed;
-  top: 20px;
-  right: 75px;
-  z-index: 1000;
-}
-
-.history-btn {
-  width: 45px;
-  height: 45px;
-  background: rgba(10, 15, 30, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  color: var(--gold);
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.history-btn:hover {
-  background: rgba(212, 168, 83, 0.2);
-  border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
-}
-
-.history-btn .badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ef5350;
-  color: white;
-  font-size: 0.6rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
-}
-
-#stage5 {
-  padding: 40px 20px;
-  box-sizing: border-box;
-  min-height: 100vh;
-}
-
-.stage5-content {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.history-header {
-  text-align: center;
-  margin-bottom: 40px;
-  position: relative;
-}
-
-.history-back-btn {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 45px;
-  height: 45px;
-  background: rgba(10, 15, 30, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  color: var(--gold);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-}
-
-.history-back-btn:hover {
-  background: rgba(212, 168, 83, 0.2);
-  border-color: var(--gold);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.history-back-btn:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.history-back-btn .back-arrow {
-  transition: transform 0.3s ease;
-}
-
-.history-back-btn:hover .back-arrow {
-  transform: translateX(-3px);
-}
-
-.history-header h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 2rem;
-  color: var(--gold);
-  margin-bottom: 10px;
-}
-
-.history-header p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.history-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: rgba(10, 15, 30, 0.6);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.history-filter-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.history-filter-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.history-filter-select {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px 15px;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.history-filter-select:focus {
-  border-color: var(--gold);
-}
-
-.history-filter-select option {
-  background: var(--deep-space);
-  color: var(--text-primary);
-}
-
-.history-clear-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 8px 15px;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.history-clear-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.history-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.history-stat-card {
-  background: rgba(10, 15, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 20px 30px;
-  text-align: center;
-  min-width: 120px;
-}
-
-.history-stat-value {
-  font-family: 'Cinzel', serif;
-  font-size: 1.8rem;
-  color: var(--gold);
-  font-weight: bold;
-}
-
-.history-stat-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 5px;
-}
-
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.history-item {
-  background: rgba(10, 15, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 25px;
-  transition: all 0.3s ease;
-}
-
-.history-item:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.history-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.history-item-date {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.history-item-time {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.history-item-question {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  font-style: italic;
-  margin-bottom: 20px;
-}
-
-.history-item-question:empty {
-  display: none;
-}
-
-.history-item-cards {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.history-item-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  min-width: 100px;
-}
-
-.history-item-card-image {
-  width: 80px;
-  height: 120px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  margin-bottom: 8px;
-  position: relative;
-}
-
-.history-item-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.history-item-card-image img.loaded {
-  opacity: 1;
-}
-
-.history-item-card-image img.reversed {
-  transform: rotate(180deg);
-}
-
-.history-item-card-name {
-  font-size: 0.75rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.history-item-card-position {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  margin-top: 3px;
-}
-
-.history-item-card-position.reversed {
-  color: #ef5350;
-}
-
-.history-empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-muted);
-}
-
-.history-empty-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.history-empty h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.history-empty p {
-  font-size: 0.85rem;
-}
-
-.history-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 40px;
-}
-
-.history-pagination button {
-  background: rgba(10, 15, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 10px 20px;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.history-pagination button:hover:not(:disabled) {
-  background: rgba(212, 168, 83, 0.2);
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.history-pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.history-pagination span {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  min-width: 80px;
-  text-align: center;
-}
-}
-
 .ai-status-badge {
   display: inline-block;
   padding: 4px 12px;
@@ -1644,43 +1126,6 @@ html, body {
   .card-meaning-text {
     font-size: 0.85rem;
   }
-  
-  .history-back-btn {
-    width: 38px;
-    height: 38px;
-    font-size: 1.2rem;
-  }
-  
-  .history-header h2 {
-    font-size: 1.5rem;
-  }
-  
-  .spread-recommendation {
-    padding: 15px;
-  }
-  
-  .spread-position-item {
-    padding: 8px;
-  }
-  
-  .spread-position-index {
-    width: 20px;
-    height: 20px;
-    font-size: 0.6rem;
-  }
-  
-  .spread-name {
-    font-size: 1.1rem;
-  }
-  
-  .spread-description {
-    font-size: 0.75rem;
-  }
-  
-  .spread-cards {
-    font-size: 0.7rem;
-    padding: 4px 10px;
-  }
 }
 </style>
 </head>
@@ -1690,10 +1135,6 @@ html, body {
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">命运之轮转动中...</div>
-</div>
-
-<div class="history-btn-container">
-  <button class="history-btn" id="historyBtn" title="查看抽卡历史">📜</button>
 </div>
 
 <div class="settings-btn-container">
@@ -1706,22 +1147,6 @@ html, body {
     <div class="question-label" id="questionLabel">心中默念你的问题</div>
     <textarea class="question-input" id="questionInput" placeholder="请输入你想问的问题..." rows="4"></textarea>
     <div class="input-hint">清晰的问题将引导你找到答案</div>
-    
-    <div class="spread-recommendation" id="spreadRecommendation" style="display: none;">
-      <div class="recommendation-header">
-        <div class="recommendation-icon">🔮</div>
-        <div class="recommendation-title">为你匹配的牌阵</div>
-      </div>
-      <div class="spread-card" id="spreadCard">
-        <div class="spread-name" id="spreadName"></div>
-        <div class="spread-description" id="spreadDescription"></div>
-        <div class="spread-cards" id="spreadCards"></div>
-        <div class="spread-positions" id="spreadPositions"></div>
-      </div>
-      <div class="question-type-tag" id="questionTypeTag"></div>
-      <div class="recommendation-suggestions" id="recommendationSuggestions"></div>
-    </div>
-    
     <div class="ai-status-indicator" id="aiStatusIndicator">
       <span class="ai-status-dot" id="aiStatusDot"></span>
       <span class="ai-status-text" id="aiStatusText">AI解读未启用</span>
@@ -1767,64 +1192,6 @@ html, body {
       <div class="summary-text" id="summaryText"></div>
     </div>
     <button class="btn back-btn" id="backBtn">重新开始</button>
-  </div>
-</div>
-
-<div class="stage" id="stage5">
-  <div class="stage5-content">
-    <div class="history-header">
-      <button class="history-back-btn" id="historyBackBtn" title="返回">
-        <span class="back-arrow">←</span>
-      </button>
-      <h2>抽卡历史记录</h2>
-      <p>探索你的命运轨迹</p>
-    </div>
-    
-    <div class="history-filters">
-      <div class="history-filter-group">
-        <span class="history-filter-label">花色:</span>
-        <select class="history-filter-select" id="filterSuit">
-          <option value="">全部</option>
-          <option value="major">大阿卡纳</option>
-          <option value="wands">权杖</option>
-          <option value="cups">圣杯</option>
-          <option value="swords">宝剑</option>
-          <option value="pentacles">星币</option>
-        </select>
-      </div>
-      <div class="history-filter-group">
-        <span class="history-filter-label">位置:</span>
-        <select class="history-filter-select" id="filterPosition">
-          <option value="">全部</option>
-          <option value="upright">正位</option>
-          <option value="reversed">逆位</option>
-        </select>
-      </div>
-      <button class="history-clear-btn" id="clearFiltersBtn">清除筛选</button>
-    </div>
-    
-    <div class="history-stats">
-      <div class="history-stat-card">
-        <div class="history-stat-value" id="statTotal">0</div>
-        <div class="history-stat-label">总抽卡次数</div>
-      </div>
-      <div class="history-stat-card">
-        <div class="history-stat-value" id="statCards">0</div>
-        <div class="history-stat-label">获得卡牌总数</div>
-      </div>
-      <div class="history-stat-card">
-        <div class="history-stat-value" id="statMajor">0</div>
-        <div class="history-stat-label">大阿卡纳</div>
-      </div>
-      <div class="history-stat-card">
-        <div class="history-stat-value" id="statMinor">0</div>
-        <div class="history-stat-label">小阿卡纳</div>
-      </div>
-    </div>
-    
-    <div class="history-list" id="historyList"></div>
-    
-    <div class="history-pagination" id="historyPagination"></div>
   </div>
 </div>
 
@@ -1940,216 +1307,6 @@ function saveAiConfig(config) {
   }
 }
 
-const HISTORY_KEY = 'tarot_reading_history';
-const HISTORY_PAGE_SIZE = 5;
-
-let currentHistoryPage = 1;
-let currentFilters = { suit: '', position: '' };
-
-function saveReadingHistory(reading) {
-  try {
-    const history = getReadingHistory();
-    history.unshift({
-      id: Date.now(),
-      timestamp: Date.now(),
-      question: reading.question,
-      cards: reading.cards,
-      summary: reading.summary || ''
-    });
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-    updateHistoryBadge();
-  } catch (e) {
-    console.error('Failed to save reading history:', e);
-  }
-}
-
-function getReadingHistory() {
-  try {
-    const saved = localStorage.getItem(HISTORY_KEY);
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-}
-
-function updateHistoryBadge() {
-  const history = getReadingHistory();
-  const badge = document.querySelector('.history-btn .badge');
-  if (badge) {
-    badge.textContent = history.length;
-    badge.style.display = history.length > 0 ? 'block' : 'none';
-  }
-}
-
-function getCardSuit(cardId) {
-  if (cardId >= 1 && cardId <= 22) return 'major';
-  if (cardId >= 23 && cardId <= 35) return 'wands';
-  if (cardId >= 36 && cardId <= 49) return 'cups';
-  if (cardId >= 50 && cardId <= 63) return 'swords';
-  if (cardId >= 64 && cardId <= 78) return 'pentacles';
-  return '';
-}
-
-function filterHistory(history, filters) {
-  return history.filter(item => {
-    if (filters.suit) {
-      const hasSuit = item.cards.some(card => getCardSuit(card.id) === filters.suit);
-      if (!hasSuit) return false;
-    }
-    if (filters.position === 'upright') {
-      const allUpright = item.cards.every(card => !card.isReversed);
-      if (!allUpright) return false;
-    }
-    if (filters.position === 'reversed') {
-      const hasReversed = item.cards.some(card => card.isReversed);
-      if (!hasReversed) return false;
-    }
-    return true;
-  });
-}
-
-function calculateStats(history) {
-  let totalReadings = history.length;
-  let totalCards = 0;
-  let majorCount = 0;
-  let minorCount = 0;
-  
-  history.forEach(item => {
-    totalCards += item.cards.length;
-    item.cards.forEach(card => {
-      if (card.id >= 1 && card.id <= 22) {
-        majorCount++;
-      } else {
-        minorCount++;
-      }
-    });
-  });
-  
-  return { totalReadings, totalCards, majorCount, minorCount };
-}
-
-function renderHistory() {
-  const history = getReadingHistory();
-  const filteredHistory = filterHistory(history, currentFilters);
-  const stats = calculateStats(filteredHistory);
-  
-  document.getElementById('statTotal').textContent = stats.totalReadings;
-  document.getElementById('statCards').textContent = stats.totalCards;
-  document.getElementById('statMajor').textContent = stats.majorCount;
-  document.getElementById('statMinor').textContent = stats.minorCount;
-  
-  const totalPages = Math.ceil(filteredHistory.length / HISTORY_PAGE_SIZE);
-  currentHistoryPage = Math.min(currentHistoryPage, Math.max(1, totalPages));
-  
-  const startIndex = (currentHistoryPage - 1) * HISTORY_PAGE_SIZE;
-  const pageData = filteredHistory.slice(startIndex, startIndex + HISTORY_PAGE_SIZE);
-  
-  const listContainer = document.getElementById('historyList');
-  
-  if (pageData.length === 0) {
-    listContainer.innerHTML = `
-      <div class="history-empty">
-        <div class="history-empty-icon">🔮</div>
-        <h3>暂无抽卡记录</h3>
-        <p>完成一次塔罗抽卡后，记录将自动保存在这里</p>
-      </div>
-    `;
-  } else {
-    listContainer.innerHTML = pageData.map(item => {
-      const date = new Date(item.timestamp);
-      const dateStr = date.toLocaleDateString('zh-CN', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-      const timeStr = date.toLocaleTimeString('zh-CN', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-      
-      const cardsHtml = item.cards.map(card => {
-        const imageUrl = getCardImageUrl(card);
-        return `
-          <div class="history-item-card">
-            <div class="history-item-card-image">
-              <img src="${imageUrl}" alt="${card.name}" 
-                   class="${card.isReversed ? 'reversed' : ''}"
-                   onload="this.classList.add('loaded')"
-                   onerror="this.parentElement.style.background='rgba(255, 255, 255, 0.1)'">
-            </div>
-            <div class="history-item-card-name">${card.name}</div>
-            <div class="history-item-card-position ${card.isReversed ? 'reversed' : ''}">
-              ${card.isReversed ? '逆位' : '正位'}
-            </div>
-          </div>
-        `;
-      }).join('');
-      
-      return `
-        <div class="history-item">
-          <div class="history-item-header">
-            <span class="history-item-date">${dateStr}</span>
-            <span class="history-item-time">${timeStr}</span>
-          </div>
-          ${item.question ? `<div class="history-item-question">"${item.question}"</div>` : ''}
-          <div class="history-item-cards">${cardsHtml}</div>
-        </div>
-      `;
-    }).join('');
-  }
-  
-  renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-  const container = document.getElementById('historyPagination');
-  
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    return;
-  }
-  
-  let html = '';
-  
-  if (currentHistoryPage > 1) {
-    html += `<button onclick="goToHistoryPage(${currentHistoryPage - 1})">上一页</button>`;
-  }
-  
-  html += `<span>第 ${currentHistoryPage} / ${totalPages} 页</span>`;
-  
-  if (currentHistoryPage < totalPages) {
-    html += `<button onclick="goToHistoryPage(${currentHistoryPage + 1})">下一页</button>`;
-  }
-  
-  container.innerHTML = html;
-}
-
-function goToHistoryPage(page) {
-  currentHistoryPage = page;
-  renderHistory();
-}
-
-let previousStage = 1;
-
-function openHistory() {
-  document.querySelectorAll('.stage').forEach((stage, index) => {
-    if (stage.classList.contains('active')) {
-      previousStage = index + 1;
-    }
-  });
-  
-  currentHistoryPage = 1;
-  currentFilters = { suit: '', position: '' };
-  document.getElementById('filterSuit').value = '';
-  document.getElementById('filterPosition').value = '';
-  renderHistory();
-  showStage(5);
-}
-
-function closeHistory() {
-  showStage(previousStage);
-}
-
 function updateAiStatusIndicator() {
   const config = getAiConfig();
   const indicator = document.getElementById('aiStatusIndicator');
@@ -2159,31 +1316,14 @@ function updateAiStatusIndicator() {
   
   if (config.apiKey && config.apiEndpoint) {
     indicator.className = 'ai-status-indicator enabled';
-    textEl.textContent = '你已连接宇宙';
+    textEl.textContent = 'AI解读已启用';
   } else {
     indicator.className = 'ai-status-indicator';
     textEl.textContent = '灵视未开启 - 点击开启灵视';
   }
 }
 
-const PROXY_URLS = [
-  'https://bitter-flower-8a1b.w94stan.workers.dev',
-  'https://corsproxy.io/?',
-  'https://api.allorigins.win/raw',
-  'https://cors-anywhere.herokuapp.com/',
-  'https://api.codetabs.com/v1/proxy?quest='
-];
-
-let currentProxyIndex = 0;
-
-function getProxyUrl() {
-  return PROXY_URLS[currentProxyIndex];
-}
-
-function switchProxy() {
-  currentProxyIndex = (currentProxyIndex + 1) % PROXY_URLS.length;
-  return getProxyUrl();
-}
+const PROXY_URL = 'https://bitter-flower-8a1b.w94stan.workers.dev';
 
 async function callOpenAI(prompt, config) {
   const headers = {
@@ -2192,45 +1332,7 @@ async function callOpenAI(prompt, config) {
 
   const body = {
     model: config.model,
-    messages: [{ 
-      role: 'system', 
-      content: `你是一位拥有20年经验的专业塔罗牌大师，精通韦特塔罗、透特塔罗等多种体系。你的解读风格神秘、温暖、富有洞察力，能够深入用户的内心世界，揭示命运的奥秘。
-
-【解读风格指南】
-- 语言风格：优雅、神秘、诗意，避免生硬机械
-- 深度层次：从表面到深层，层层递进
-- 情感基调：温暖关怀，给予希望和指引
-- 专业程度：具备心理学知识，提供深度心理洞察
-
-【输出格式要求】
-请按照以下结构进行解读，每个部分用小标题分隔：
-
-✨ 能量总览
-分析三张牌共同构成的能量场和整体氛围
-
-🎯 核心讯息
-揭示当前最关键的信息和主题
-
-🌊 趋势洞察
-分析未来的发展趋势和可能的变化
-
-💡 心理启示
-从心理学角度提供深度洞察和自我认知
-
-🔮 行动建议
-给出3条具体、可操作的建议
-
-🌙 灵魂寄语
-用一句话作为温暖的结语
-
-【禁忌事项】
-- 避免简单罗列每张牌的含义
-- 不要使用过于学术化或生硬的语言
-- 不要做出绝对化的预言
-- 避免负面或令人恐惧的表述
-
-请用你的智慧和直觉，为用户提供一次难忘的塔罗牌解读体验。` 
-    }, { role: 'user', content: prompt }],
+    messages: [{ role: 'system', content: '你是一位专业的塔罗牌解读师，擅长从塔罗牌牌义分析问题并进行答案分析和建议指引。请用简洁且专业的语言进行解读。' }, { role: 'user', content: prompt }],
     temperature: parseFloat(config.temperature),
     max_tokens: parseInt(config.maxTokens),
     stream: true
@@ -2238,69 +1340,16 @@ async function callOpenAI(prompt, config) {
 
   const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
   
-  const domesticProviders = ['tongyi', 'doubao', 'deepseek'];
-  const isDomestic = domesticProviders.includes(config.provider);
-  
-  if (isDomestic) {
-    try {
-      console.log(`尝试直接调用国内API: ${config.provider} -> ${targetUrl}`);
-      const response = await fetch(targetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...headers },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(60000)
-      });
-      
-      console.log(`直接调用响应状态: ${response.status}`);
-      
-      if (response.ok) return response;
-      
-      const errorText = await response.text().catch(() => '');
-      console.log(`直接调用失败，响应内容: ${errorText}`);
-    } catch (err) {
-      console.log(`直接调用失败: ${err.message}`);
-    }
-  }
-  
-  for (let i = 0; i < PROXY_URLS.length; i++) {
-    try {
-      const proxyUrl = getProxyUrl();
-      let response;
-      
-      if (proxyUrl.includes('corsproxy.io')) {
-        response = await fetch(`${proxyUrl}${encodeURIComponent(targetUrl)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...headers },
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(60000)
-        });
-      } else if (proxyUrl.includes('allorigins')) {
-        response = await fetch(`${proxyUrl}?url=${encodeURIComponent(targetUrl)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...headers },
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(60000)
-        });
-      } else {
-        response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: targetUrl,
-            headers: headers,
-            body: body
-          }),
-          signal: AbortSignal.timeout(60000)
-        });
-      }
-      
-      if (response.ok) return response;
-    } catch {
-      switchProxy();
-    }
-  }
-  
-  throw new Error('所有代理服务器均无法连接');
+  return fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url: targetUrl,
+      headers: headers,
+      body: body
+    }),
+    signal: AbortSignal.timeout(60000)
+  });
 }
 
 async function callGemini(prompt, config) {
@@ -2310,89 +1359,23 @@ async function callGemini(prompt, config) {
   const targetUrl = `${endpoint}${separator}key=${config.apiKey}`;
 
   const requestBody = {
-    contents: [{ parts: [{ text: `你是一位拥有20年经验的专业塔罗牌大师，精通韦特塔罗、透特塔罗等多种体系。你的解读风格神秘、温暖、富有洞察力，能够深入用户的内心世界，揭示命运的奥秘。
-
-【解读风格指南】
-- 语言风格：优雅、神秘、诗意，避免生硬机械
-- 深度层次：从表面到深层，层层递进
-- 情感基调：温暖关怀，给予希望和指引
-- 专业程度：具备心理学知识，提供深度心理洞察
-
-【输出格式要求】
-请按照以下结构进行解读，每个部分用小标题分隔：
-
-✨ 能量总览
-分析三张牌共同构成的能量场和整体氛围
-
-🎯 核心讯息
-揭示当前最关键的信息和主题
-
-🌊 趋势洞察
-分析未来的发展趋势和可能的变化
-
-💡 心理启示
-从心理学角度提供深度洞察和自我认知
-
-🔮 行动建议
-给出3条具体、可操作的建议
-
-🌙 灵魂寄语
-用一句话作为温暖的结语
-
-【禁忌事项】
-- 避免简单罗列每张牌的含义
-- 不要使用过于学术化或生硬的语言
-- 不要做出绝对化的预言
-- 避免负面或令人恐惧的表述
-
-请用你的智慧和直觉，为用户提供一次难忘的塔罗牌解读体验。
-
-用户问题：${prompt}` }] }],
+    contents: [{ parts: [{ text: `你是一位专业的塔罗牌解读师，擅长深度心理分析和命运指引。请用温暖、神秘且专业的语言进行解读。\n\n用户问题：${prompt}` }] }],
     generationConfig: {
       temperature: parseFloat(config.temperature),
       maxOutputTokens: parseInt(config.maxTokens)
     }
   };
 
-  for (let i = 0; i < PROXY_URLS.length; i++) {
-    try {
-      const proxyUrl = getProxyUrl();
-      let response;
-      
-      if (proxyUrl.includes('corsproxy.io')) {
-        response = await fetch(`${proxyUrl}${encodeURIComponent(targetUrl)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
-          signal: AbortSignal.timeout(60000)
-        });
-      } else if (proxyUrl.includes('allorigins')) {
-        response = await fetch(`${proxyUrl}?url=${encodeURIComponent(targetUrl)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
-          signal: AbortSignal.timeout(60000)
-        });
-      } else {
-        response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: targetUrl,
-            headers: {},
-            body: requestBody
-          }),
-          signal: AbortSignal.timeout(60000)
-        });
-      }
-      
-      if (response.ok) return response;
-    } catch {
-      switchProxy();
-    }
-  }
-  
-  throw new Error('所有代理服务器均无法连接');
+  return fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url: targetUrl,
+      headers: {},
+      body: requestBody
+    }),
+    signal: AbortSignal.timeout(60000)
+  });
 }
 
 async function testApiConnection(config) {
@@ -2420,69 +1403,16 @@ async function testApiConnection(config) {
       };
     }
 
-    const domesticProviders = ['tongyi', 'doubao', 'deepseek'];
-    const isDomestic = domesticProviders.includes(config.provider);
-    
-    if (isDomestic) {
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...customHeaders },
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(15000)
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.choices && data.choices.length > 0) {
-            return { success: true, message: '连接成功！API密钥有效。' };
-          } else {
-            return { success: false, message: '连接失败: 响应格式不正确' };
-          }
-        }
-      } catch {
-      }
-    }
-
-    let response;
-    
-    for (let i = 0; i < PROXY_URLS.length; i++) {
-      try {
-        const proxyUrl = getProxyUrl();
-        
-        if (proxyUrl.includes('corsproxy.io')) {
-          response = await fetch(`${proxyUrl}${encodeURIComponent(endpoint)}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...customHeaders },
-            body: JSON.stringify(body),
-            signal: AbortSignal.timeout(15000)
-          });
-        } else if (proxyUrl.includes('allorigins')) {
-          response = await fetch(`${proxyUrl}?url=${encodeURIComponent(endpoint)}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...customHeaders },
-            body: JSON.stringify(body),
-            signal: AbortSignal.timeout(15000)
-          });
-        } else {
-          response = await fetch(proxyUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              url: endpoint,
-              headers: customHeaders,
-              body: body
-            }),
-            signal: AbortSignal.timeout(15000)
-          });
-        }
-        
-        if (response.ok) break;
-      } catch {
-        switchProxy();
-        if (i === PROXY_URLS.length - 1) throw new Error('所有代理服务器均无法连接');
-      }
-    }
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: endpoint,
+        headers: customHeaders,
+        body: body
+      }),
+      signal: AbortSignal.timeout(15000)
+    });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
@@ -2589,11 +1519,8 @@ async function streamApi(prompt, config, onChunk, onError) {
         }
         onError('请求超时，请检查网络连接');
       } else if (error.name === 'AbortError') {
-        if (retryCount < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 3000 * retryCount));
-          continue;
-        }
-        onError('请求被中断，请刷新页面重试');
+        onError('请求被取消');
+        return;
       } else if (error.message.includes('API密钥无效') || error.message.includes('401')) {
         onError('API密钥无效，请检查设置');
         return;
@@ -2609,36 +1536,23 @@ async function streamApi(prompt, config, onChunk, onError) {
 }
 
 function buildTarotPrompt(question, summaries) {
-  const spreadName = currentSpread ? currentSpread.name : '三牌阵';
   const cardDetails = summaries.map((s, i) => {
-    const positionName = currentSpread && currentSpread.positions[i] 
-      ? currentSpread.positions[i].name 
-      : ['当前状态', '挑战/阻碍', '结果/指引'][i] || `位置${i + 1}`;
-    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」【${positionName}】：${s.meaning}`;
+    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」：${s.meaning}`;
   }).join('\n');
 
-  let positionDescription = '';
-  if (currentSpread) {
-    positionDescription = currentSpread.positions.map((pos, i) => {
-      return `- 第${i + 1}张【${pos.name}】：${pos.meaning}`;
-    }).join('\n');
-  } else {
-    positionDescription = `- 第一张：代表当前的状态和能量
-- 第二张：代表面临的挑战或需要注意的问题
-- 第三张：代表未来的可能性和指引`;
-  }
+  return `用户的问题：${question}
 
-  return `用户的问题：${question || '未提出具体问题'}
-
-使用牌阵：${spreadName}
-
-抽到的塔罗牌及其位置含义：
+抽到的三张塔罗牌：
 ${cardDetails}
 
-【位置说明】
-${positionDescription}
+请基于以上卡牌组合，为用户提供一次深度的塔罗牌解读。要求：
 
-请结合用户的问题和抽到的牌阵组合，进行一次深度的塔罗牌解读。`;
+1. 整体分析：解读这三张牌共同构成的能量和信息
+2. 主题解读：分析当前的主题和潜在的趋势
+3. 心理洞察：从心理学角度提供深度洞察
+4. 实用建议：给出具体、可操作的建议
+
+请用温暖、神秘且富有洞察力的语言，避免简单的信息罗列，提供有深度的综合分析。`;
 }
 
 const MAJOR_ARCANA = [
@@ -2678,10 +1592,10 @@ const MINOR_ARCANA = {
     { id: 29, name: '权杖八', english: 'Eight of Wands', meaning: '迅速行动、消息、旅行、进展', reversed: '延迟、阻碍、消息延迟', advice: '迅速行动，抓住机会' },
     { id: 30, name: '权杖九', english: 'Nine of Wands', meaning: '警惕、防御、耐力、准备', reversed: '过度警惕、缺乏准备、恐惧', advice: '保持警惕，但不要过度紧张' },
     { id: 31, name: '权杖十', english: 'Ten of Wands', meaning: '负担、责任、压力、过度承诺', reversed: '放下负担、寻求帮助', advice: '学会放手，寻求帮助' },
-    { id: 32, name: '权杖侍从', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
-    { id: 33, name: '权杖骑士', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
-    { id: 34, name: '权杖王后', english: 'Queen of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
-    { id: 35, name: '权杖国王', english: 'King of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
+    { id: 32, name: '权杖骑士', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
+    { id: 33, name: '权杖王后', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
+    { id: 34, name: '权杖国王', english: 'Queen of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
+    { id: 35, name: '权杖皇后', english: 'King of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
   ],
   cups: [
     { id: 36, name: '圣杯一', english: 'Ace of Cups', meaning: '爱、情感、新关系、直觉', reversed: '情感阻塞、拒绝爱', advice: '敞开心扉，接纳爱与情感' },
@@ -2694,10 +1608,10 @@ const MINOR_ARCANA = {
     { id: 43, name: '圣杯八', english: 'Eight of Cups', meaning: '离开、寻求更好、放弃', reversed: '不愿离开、停滞、缺乏勇气', advice: '勇敢离开，寻求更好的未来' },
     { id: 44, name: '圣杯九', english: 'Nine of Cups', meaning: '满足、愿望实现、幸福、成功', reversed: '不满、愿望未实现、缺乏感恩', advice: '珍惜已拥有的，感恩生活' },
     { id: 45, name: '圣杯十', english: 'Ten of Cups', meaning: '家庭和谐、幸福、满足、团聚', reversed: '家庭冲突、不幸福、分离', advice: '珍惜家庭，维护和谐' },
-    { id: 46, name: '圣杯侍从', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
-    { id: 47, name: '圣杯骑士', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
-    { id: 48, name: '圣杯王后', english: 'Queen of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
-    { id: 49, name: '圣杯国王', english: 'King of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
+    { id: 46, name: '圣杯骑士', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
+    { id: 47, name: '圣杯王后', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
+    { id: 48, name: '圣杯国王', english: 'Queen of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
+    { id: 49, name: '圣杯皇后', english: 'King of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
   ],
   swords: [
     { id: 50, name: '宝剑一', english: 'Ace of Swords', meaning: '真理、清晰、新思想、沟通', reversed: '混乱、误解、沟通不畅', advice: '寻求真理，清晰表达' },
@@ -2710,10 +1624,10 @@ const MINOR_ARCANA = {
     { id: 57, name: '宝剑八', english: 'Eight of Swords', meaning: '限制、恐惧、被困、自我怀疑', reversed: '解放、勇气、突破限制', advice: '勇敢突破，相信自己' },
     { id: 58, name: '宝剑九', english: 'Nine of Swords', meaning: '焦虑、恐惧、失眠、内疚', reversed: '释放恐惧、疗愈、平静', advice: '面对恐惧，寻求平静' },
     { id: 59, name: '宝剑十', english: 'Ten of Swords', meaning: '结束、痛苦、失败、背叛', reversed: '新开始、恢复、希望', advice: '接受结束，期待新开始' },
-    { id: 60, name: '宝剑侍从', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
-    { id: 61, name: '宝剑骑士', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
-    { id: 62, name: '宝剑王后', english: 'Queen of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
-    { id: 63, name: '宝剑国王', english: 'King of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
+    { id: 60, name: '宝剑骑士', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
+    { id: 61, name: '宝剑王后', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
+    { id: 62, name: '宝剑国王', english: 'Queen of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
+    { id: 63, name: '宝剑皇后', english: 'King of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
   ],
   pentacles: [
     { id: 64, name: '星币一', english: 'Ace of Pentacles', meaning: '财富、新机会、物质、稳定', reversed: '错失机会、财务问题', advice: '抓住机会，谨慎理财' },
@@ -2726,246 +1640,17 @@ const MINOR_ARCANA = {
     { id: 71, name: '星币八', english: 'Eight of Pentacles', meaning: '技能、专注、勤奋、改进', reversed: '缺乏专注、技能不足、懒惰', advice: '专注提升，勤奋工作' },
     { id: 72, name: '星币九', english: 'Nine of Pentacles', meaning: '独立、成功、富足、自信', reversed: '依赖、缺乏成功、不满足', advice: '享受独立，保持自信' },
     { id: 73, name: '星币十', english: 'Ten of Pentacles', meaning: '财富、家庭、遗产、长期安全', reversed: '家庭问题、财务不稳定', advice: '重视家庭，规划未来' },
-    { id: 74, name: '星币侍从', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
-    { id: 75, name: '星币骑士', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
-    { id: 76, name: '星币王后', english: 'Queen of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
-    { id: 77, name: '星币国王', english: 'King of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
+    { id: 74, name: '星币骑士', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
+    { id: 75, name: '星币王后', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
+    { id: 76, name: '星币国王', english: 'Queen of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
+    { id: 77, name: '星币皇后', english: 'King of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
   ]
 };
-
-const QUESTION_TYPES = [
-  {
-    id: 'love',
-    name: '爱情关系',
-    description: '关于爱情、婚姻、伴侣关系的问题',
-    keywords: ['爱', '情', '婚姻', '伴侣', '恋爱', '感情', '喜欢', '暗恋', '分手', '复合', '求婚', '约会', '暧昧', '情人', '对象', '另一半', '配偶'],
-    relatedKeywords: ['关系', '亲密', '承诺', '选择', '三角', '出轨', '异地']
-  },
-  {
-    id: 'career',
-    name: '事业工作',
-    description: '关于工作、职业发展、事业规划的问题',
-    keywords: ['工作', '事业', '职业', '公司', '老板', '同事', '升职', '加薪', '跳槽', '面试', '创业', '项目', '职场', '团队', '领导', '职位'],
-    relatedKeywords: ['发展', '机会', '挑战', '竞争', '合作', '决策', '方向']
-  },
-  {
-    id: 'finance',
-    name: '财富金钱',
-    description: '关于财务、投资、金钱的问题',
-    keywords: ['钱', '财', '富', '投资', '股票', '理财', '赚钱', '收入', '支出', '债务', '贷款', '储蓄', '奖金', '工资', '生意', '利润', '亏损'],
-    relatedKeywords: ['资源', '价值', '机会', '风险', '稳定', '增长']
-  },
-  {
-    id: 'health',
-    name: '健康身体',
-    description: '关于身体、心理、健康的问题',
-    keywords: ['健康', '身体', '病', '医院', '治疗', '康复', '心理', '压力', '焦虑', '抑郁', '失眠', '疲劳', '养生', '运动', '饮食'],
-    relatedKeywords: ['状态', '能量', '平衡', '疗愈', '恢复', '预防']
-  },
-  {
-    id: 'family',
-    name: '家庭亲情',
-    description: '关于家庭、亲情、人际关系的问题',
-    keywords: ['家庭', '父母', '孩子', '亲情', '亲戚', '家人', '代沟', '和解', '沟通', '支持', '责任', '传承'],
-    relatedKeywords: ['关系', '和谐', '冲突', '理解', '关爱', '成长']
-  },
-  {
-    id: 'education',
-    name: '学业学习',
-    description: '关于学习、考试、教育的问题',
-    keywords: ['学习', '考试', '成绩', '学校', '专业', '考研', '留学', '毕业', '论文', '作业', '导师', '课程', '知识', '技能'],
-    relatedKeywords: ['成长', '发展', '机会', '选择', '方向', '目标']
-  },
-  {
-    id: 'future',
-    name: '未来发展',
-    description: '关于未来方向、人生规划、时间运势的问题',
-    keywords: ['未来', '规划', '方向', '前途', '命运', '人生', '目标', '梦想', '愿望', '选择', '决定', '机会', '挑战', '转变', '新开始', '一周', '运势', '运程', '本周', '下周', '明天', '后天', '今年', '明年', '近期', '短期', '长期', '最近', '即将'],
-    relatedKeywords: ['道路', '旅程', '方向', '可能性', '机遇', '成长', '时间', '期限', '发展']
-  },
-  {
-    id: 'decision',
-    name: '决策选择',
-    description: '关于需要做出决定或选择的问题',
-    keywords: ['选', '决定', '选择', '要不要', '应该', '是否', '哪个', '怎么办', '如何', '取舍', '权衡', '利弊'],
-    relatedKeywords: ['方案', '路径', '后果', '影响', '建议', '指导']
-  },
-  {
-    id: 'spirituality',
-    name: '心灵成长',
-    description: '关于心灵成长、自我探索、灵性的问题',
-    keywords: ['心灵', '灵性', '成长', '修行', '冥想', '觉醒', '自我', '探索', '使命', '意义', '信仰', '能量', '直觉', '正念'],
-    relatedKeywords: ['内在', '智慧', '意识', '转化', '疗愈', '觉醒']
-  },
-  {
-    id: 'missing',
-    name: '失物寻人',
-    description: '关于寻找失物或失联人员的问题',
-    keywords: ['丢', '找', '失踪', '失联', '丢失', '寻找', '物品', '东西', '人', '在哪里', '位置'],
-    relatedKeywords: ['方向', '线索', '发现', '归还', '重逢']
-  }
-];
-
-const TAROT_SPREADS = [
-  {
-    id: 'three-card',
-    name: '三牌阵',
-    description: '最经典的牌阵，适合大多数问题',
-    cardCount: 3,
-    positions: [
-      { index: 0, name: '当前状态', meaning: '代表你现在所处的状况和能量' },
-      { index: 1, name: '挑战阻碍', meaning: '代表你面临的挑战或需要注意的问题' },
-      { index: 2, name: '结果指引', meaning: '代表未来的可能性和指引' }
-    ],
-    suitableFor: ['love', 'career', 'finance', 'future', 'decision', 'spirituality'],
-    complexity: 1
-  },
-  {
-    id: 'celtic-cross',
-    name: '凯尔特十字',
-    description: '最全面的牌阵，适合复杂问题的深度解读',
-    cardCount: 10,
-    positions: [
-      { index: 0, name: '核心问题', meaning: '问题的核心和本质' },
-      { index: 1, name: '障碍', meaning: '阻碍你前进的因素' },
-      { index: 2, name: '根源', meaning: '问题的深层根源' },
-      { index: 3, name: '过去', meaning: '过去的影响和背景' },
-      { index: 4, name: '未来', meaning: '未来的发展趋势' },
-      { index: 5, name: '外部影响', meaning: '外部环境和他人的影响' },
-      { index: 6, name: '内在感受', meaning: '你的内心感受和直觉' },
-      { index: 7, name: '建议', meaning: '宇宙给你的建议' },
-      { index: 8, name: '期望', meaning: '你所期望的结果' },
-      { index: 9, name: '最终结果', meaning: '最终的结果和答案' }
-    ],
-    suitableFor: ['love', 'career', 'future', 'spirituality', 'family'],
-    complexity: 3
-  },
-  {
-    id: 'relationship',
-    name: '关系牌阵',
-    description: '专门用于解读两人关系的牌阵',
-    cardCount: 6,
-    positions: [
-      { index: 0, name: '你的感受', meaning: '你对这段关系的真实感受' },
-      { index: 1, name: '对方感受', meaning: '对方对你的真实感受' },
-      { index: 2, name: '你的需求', meaning: '你在关系中的需求' },
-      { index: 3, name: '对方需求', meaning: '对方在关系中的需求' },
-      { index: 4, name: '潜在问题', meaning: '关系中隐藏的问题' },
-      { index: 5, name: '未来走向', meaning: '关系的未来发展方向' }
-    ],
-    suitableFor: ['love', 'family'],
-    complexity: 2
-  },
-  {
-    id: 'yes-no',
-    name: '是非牌阵',
-    description: '简单直接的是非问题答案',
-    cardCount: 1,
-    positions: [
-      { index: 0, name: '答案', meaning: '正位代表肯定，逆位代表否定' }
-    ],
-    suitableFor: ['decision'],
-    complexity: 1
-  },
-  {
-    id: 'timeline',
-    name: '时间流牌阵',
-    description: '解读过去、现在、未来的时间发展',
-    cardCount: 5,
-    positions: [
-      { index: 0, name: '过去', meaning: '过去发生的事情和影响' },
-      { index: 1, name: '现在', meaning: '当前的状况和能量' },
-      { index: 2, name: '未来', meaning: '近期未来的发展' },
-      { index: 3, name: '挑战', meaning: '需要面对的挑战' },
-      { index: 4, name: '结果', meaning: '最终的结果和指引' }
-    ],
-    suitableFor: ['future', 'career', 'love'],
-    complexity: 2
-  },
-  {
-    id: 'money',
-    name: '财富牌阵',
-    description: '专门用于解读财务状况和金钱运势',
-    cardCount: 4,
-    positions: [
-      { index: 0, name: '当前财务', meaning: '当前的财务状况' },
-      { index: 1, name: '收入来源', meaning: '收入来源和机会' },
-      { index: 2, name: '支出问题', meaning: '支出和潜在问题' },
-      { index: 3, name: '财富建议', meaning: '关于财富的建议和指引' }
-    ],
-    suitableFor: ['finance'],
-    complexity: 2
-  },
-  {
-    id: 'health',
-    name: '健康牌阵',
-    description: '解读身体和心理健康状况',
-    cardCount: 4,
-    positions: [
-      { index: 0, name: '当前状态', meaning: '当前的健康状态' },
-      { index: 1, name: '潜在问题', meaning: '潜在的健康问题' },
-      { index: 2, name: '疗愈方向', meaning: '适合的疗愈方向' },
-      { index: 3, name: '健康建议', meaning: '保持健康的建议' }
-    ],
-    suitableFor: ['health'],
-    complexity: 2
-  },
-  {
-    id: 'career',
-    name: '事业牌阵',
-    description: '解读职业发展和工作问题',
-    cardCount: 5,
-    positions: [
-      { index: 0, name: '当前状况', meaning: '当前的工作状况' },
-      { index: 1, name: '优势', meaning: '你的优势和能力' },
-      { index: 2, name: '挑战', meaning: '工作中的挑战' },
-      { index: 3, name: '机会', meaning: '未来的机会' },
-      { index: 4, name: '建议', meaning: '事业发展的建议' }
-    ],
-    suitableFor: ['career', 'education'],
-    complexity: 2
-  },
-  {
-    id: 'decision',
-    name: '决策牌阵',
-    description: '帮助做出艰难决定的牌阵',
-    cardCount: 7,
-    positions: [
-      { index: 0, name: '现状', meaning: '当前的状况' },
-      { index: 1, name: '选项A', meaning: '选择A的优缺点' },
-      { index: 2, name: '选项B', meaning: '选择B的优缺点' },
-      { index: 3, name: '隐藏因素', meaning: '隐藏的因素和影响' },
-      { index: 4, name: '你的直觉', meaning: '你的直觉和感受' },
-      { index: 5, name: '他人建议', meaning: '他人的建议和影响' },
-      { index: 6, name: '最佳选择', meaning: '最适合你的选择' }
-    ],
-    suitableFor: ['decision', 'career', 'love'],
-    complexity: 3
-  },
-  {
-    id: 'spirituality',
-    name: '灵性牌阵',
-    description: '用于心灵成长和自我探索',
-    cardCount: 6,
-    positions: [
-      { index: 0, name: '当前意识', meaning: '当前的意识状态' },
-      { index: 1, name: '灵魂课题', meaning: '当前的灵魂课题' },
-      { index: 2, name: '指引', meaning: '宇宙给你的指引' },
-      { index: 3, name: '障碍', meaning: '灵性成长的障碍' },
-      { index: 4, name: '潜能', meaning: '未开发的潜能' },
-      { index: 5, name: '使命', meaning: '你的灵魂使命' }
-    ],
-    suitableFor: ['spirituality'],
-    complexity: 3
-  }
-];
 
 let allCards = [];
 let tarotImages = {};
 let selectedCards = [];
 let cardImagesPreloaded = [];
-let currentSpread = null;
-let detectedQuestionType = null;
 
 function initStarBackground() {
   const bg = document.getElementById('star-bg');
@@ -2991,162 +1676,6 @@ function initStarBackground() {
     comet.style.animationDelay = `${Math.random() * 8}s`;
     bg.appendChild(comet);
   }
-}
-
-function analyzeQuestion(question) {
-  if (!question || !question.trim()) {
-    return {
-      type: null,
-      confidence: 0,
-      suggestions: ['请输入你的问题，我会为你匹配最适合的牌阵', '例如：我和他的关系会有结果吗？', '例如：我最近的工作运势如何？']
-    };
-  }
-  
-  const q = question.toLowerCase().trim();
-  let bestType = null;
-  let highestScore = 0;
-  
-  QUESTION_TYPES.forEach(type => {
-    let score = 0;
-    
-    type.keywords.forEach(keyword => {
-      if (q.includes(keyword)) {
-        score += 3;
-      }
-    });
-    
-    type.relatedKeywords.forEach(keyword => {
-      if (q.includes(keyword)) {
-        score += 1;
-      }
-    });
-    
-    if (score > highestScore) {
-      highestScore = score;
-      bestType = type;
-    }
-  });
-  
-  const confidence = Math.min(highestScore / 15, 1);
-  
-  let suggestions = [];
-  if (confidence < 0.3) {
-    suggestions = [
-      '你的问题比较模糊，请提供更多细节',
-      '例如：你可以补充说明是关于爱情、事业还是健康方面',
-      '或者描述一下你目前的状况和困惑'
-    ];
-  } else if (confidence < 0.6) {
-    suggestions = [
-      '我已大致理解你的问题',
-      '如果需要更精准的解读，可以补充更多信息',
-      '例如：你所处的具体情境、时间范围等'
-    ];
-  }
-  
-  return {
-    type: bestType,
-    confidence: confidence,
-    suggestions: suggestions
-  };
-}
-
-function matchSpread(questionType, question = '') {
-  if (!questionType) {
-    return TAROT_SPREADS.find(s => s.id === 'three-card');
-  }
-  
-  const timeKeywords = ['一周', '本周', '下周', '明天', '后天', '昨天', '今天', '今年', '明年', '本月', '下月', '近期', '短期', '长期', '最近', '即将', '未来'];
-  const hasTimeKeyword = timeKeywords.some(kw => question.includes(kw));
-  
-  const suitableSpreads = TAROT_SPREADS.filter(spread => 
-    spread.suitableFor.includes(questionType.id)
-  );
-  
-  if (suitableSpreads.length === 0) {
-    return TAROT_SPREADS.find(s => s.id === 'three-card');
-  }
-  
-  if (hasTimeKeyword && questionType.id === 'future') {
-    const timelineSpread = suitableSpreads.find(s => s.id === 'timeline');
-    if (timelineSpread) return timelineSpread;
-  }
-  
-  suitableSpreads.sort((a, b) => {
-    const aHasExactMatch = a.suitableFor.includes(questionType.id);
-    const bHasExactMatch = b.suitableFor.includes(questionType.id);
-    
-    if (aHasExactMatch && !bHasExactMatch) return -1;
-    if (!aHasExactMatch && bHasExactMatch) return 1;
-    
-    return a.complexity - b.complexity;
-  });
-  
-  return suitableSpreads[0];
-}
-
-function getSpreadSuggestions(question) {
-  const analysis = analyzeQuestion(question);
-  const spread = matchSpread(analysis.type, question);
-  
-  return {
-    analysis: analysis,
-    spread: spread,
-    question: question
-  };
-}
-
-function updateSpreadRecommendation(question) {
-  const recommendationEl = document.getElementById('spreadRecommendation');
-  const spreadNameEl = document.getElementById('spreadName');
-  const spreadDescriptionEl = document.getElementById('spreadDescription');
-  const spreadCardsEl = document.getElementById('spreadCards');
-  const spreadPositionsEl = document.getElementById('spreadPositions');
-  const questionTypeTagEl = document.getElementById('questionTypeTag');
-  const suggestionsEl = document.getElementById('recommendationSuggestions');
-  
-  if (!question) {
-    recommendationEl.style.display = 'none';
-    return;
-  }
-  
-  const result = getSpreadSuggestions(question);
-  const spread = result.spread;
-  const analysis = result.analysis;
-  
-  spreadNameEl.textContent = spread.name;
-  spreadDescriptionEl.textContent = spread.description;
-  spreadCardsEl.innerHTML = `<span>📦</span> 需要选择 ${spread.cardCount} 张卡牌`;
-  
-  const positionsHtml = spread.positions.map(pos => `
-    <div class="spread-position-item">
-      <div class="spread-position-index">${pos.index + 1}</div>
-      <div>
-        <div class="spread-position-name">${pos.name}</div>
-        <div class="spread-position-meaning">${pos.meaning}</div>
-      </div>
-    </div>
-  `).join('');
-  spreadPositionsEl.innerHTML = positionsHtml;
-  
-  if (analysis.type) {
-    questionTypeTagEl.textContent = `📌 问题类型：${analysis.type.name}`;
-    questionTypeTagEl.style.display = 'inline-block';
-  } else {
-    questionTypeTagEl.style.display = 'none';
-  }
-  
-  if (analysis.suggestions && analysis.suggestions.length > 0) {
-    const suggestionsHtml = analysis.suggestions.map(s => `
-      <div><span class="suggestion-icon">💡</span>${s}</div>
-    `).join('');
-    suggestionsEl.innerHTML = suggestionsHtml;
-    suggestionsEl.style.display = 'flex';
-  } else {
-    suggestionsEl.style.display = 'none';
-  }
-  
-  recommendationEl.style.display = 'block';
 }
 
 function typewriterEffect(element, text, speed = 50, callback) {
@@ -3364,12 +1893,11 @@ function toggleCardSelection(element, card) {
     selectedCards.splice(cardIndex, 1);
     element.classList.remove('selected');
   } else {
-    const targetCount = currentSpread ? currentSpread.cardCount : 3;
-    if (selectedCards.length < targetCount) {
+    if (selectedCards.length < 3) {
       selectedCards.push(card);
       element.classList.add('selected');
       
-      if (selectedCards.length === targetCount) {
+      if (selectedCards.length === 3) {
         setTimeout(() => {
           showResult();
         }, 600);
@@ -3382,8 +1910,7 @@ function toggleCardSelection(element, card) {
 
 function updateSelectedCount() {
   const countEl = document.getElementById('selectedCount');
-  const targetCount = currentSpread ? currentSpread.cardCount : 3;
-  countEl.textContent = `请选择 ${targetCount} 张卡牌 (${selectedCards.length}/${targetCount})`;
+  countEl.textContent = `请选择 3 张卡牌 (${selectedCards.length}/3)`;
 }
 
 function showStage(stageNum) {
@@ -3418,14 +1945,6 @@ function showResult() {
     const meaningTitle = isReversed ? '逆位含义' : '核心含义';
     const meaningText = isReversed ? card.reversed : card.meaning;
     
-    const positionName = currentSpread && currentSpread.positions[index] 
-      ? currentSpread.positions[index].name 
-      : ['当前状态', '挑战阻碍', '结果指引'][index] || `位置${index + 1}`;
-    
-    const positionMeaning = currentSpread && currentSpread.positions[index] 
-      ? currentSpread.positions[index].meaning 
-      : '';
-    
     resultCard.innerHTML = `
       <div class="result-card-image">
         <img src="${imageUrl || ''}" alt="${card.name}" onerror="this.src=''; this.parentElement.style.background='rgba(255, 255, 255, 0.1)';">
@@ -3433,8 +1952,6 @@ function showResult() {
       <div class="result-card-info">
         <div class="card-name">${index + 1}. ${card.name}</div>
         <div class="card-english-name">${card.english}</div>
-        <div class="card-spread-position">📍 ${positionName}</div>
-        ${positionMeaning ? `<div class="card-spread-position-meaning">${positionMeaning}</div>` : ''}
         <div class="card-position">${isReversed ? '逆位' : '正位'}</div>
         <div class="card-meaning-section">
           <div class="card-meaning-title">${meaningTitle}</div>
@@ -3466,28 +1983,11 @@ function showResult() {
   
   showStage(4);
   
-  const question = document.getElementById('questionInput').value.trim();
-  const readingCards = selectedCards.map((card, index) => {
-    const isReversed = Math.random() > 0.5;
-    return {
-      id: card.id,
-      name: card.name,
-      english: card.english,
-      isReversed: isReversed,
-      meaning: isReversed ? card.reversed : card.meaning,
-      advice: card.advice
-    };
-  });
-  
-  saveReadingHistory({
-    question: question,
-    cards: readingCards
-  });
-  
   const aiConfig = getAiConfig();
   const summaryTextEl = document.getElementById('summaryText');
   
   if (aiConfig.apiKey && aiConfig.apiEndpoint) {
+    const question = document.getElementById('questionInput').value.trim();
     const prompt = buildTarotPrompt(question, summaries);
     
     summaryTextEl.innerHTML = `
@@ -3495,7 +1995,7 @@ function showResult() {
         <div class="generating-dot"></div>
         <div class="generating-dot"></div>
         <div class="generating-dot"></div>
-        正在为你接受宇宙传讯
+        AI正在进行深度解读...
       </div>
     `;
     
@@ -3730,21 +2230,12 @@ async function init() {
     shuffleCards();
   }
   
-  document.getElementById('questionInput').addEventListener('input', () => {
-    const question = document.getElementById('questionInput').value.trim();
-    updateSpreadRecommendation(question);
-  });
-  
   document.getElementById('startBtn').addEventListener('click', () => {
     const question = document.getElementById('questionInput').value.trim();
     if (!question) {
       typewriterEffect(document.getElementById('questionLabel'), '请输入你的问题', 60);
       return;
     }
-    
-    const result = getSpreadSuggestions(question);
-    currentSpread = result.spread;
-    detectedQuestionType = result.analysis.type;
     
     const config = getAiConfig();
     if (!config.apiKey || !config.apiEndpoint) {
@@ -3846,47 +2337,6 @@ async function init() {
   
   loadAiSettings();
   updateAiStatusIndicator();
-  
-  updateHistoryBadge();
-  
-  const historyBtn = document.getElementById('historyBtn');
-  if (historyBtn) {
-    historyBtn.addEventListener('click', openHistory);
-  }
-  
-  const historyBackBtn = document.getElementById('historyBackBtn');
-  if (historyBackBtn) {
-    historyBackBtn.addEventListener('click', closeHistory);
-  }
-  
-  const filterSuit = document.getElementById('filterSuit');
-  if (filterSuit) {
-    filterSuit.addEventListener('change', (e) => {
-      currentFilters.suit = e.target.value;
-      currentHistoryPage = 1;
-      renderHistory();
-    });
-  }
-  
-  const filterPosition = document.getElementById('filterPosition');
-  if (filterPosition) {
-    filterPosition.addEventListener('change', (e) => {
-      currentFilters.position = e.target.value;
-      currentHistoryPage = 1;
-      renderHistory();
-    });
-  }
-  
-  const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-  if (clearFiltersBtn) {
-    clearFiltersBtn.addEventListener('click', () => {
-      currentFilters = { suit: '', position: '' };
-      document.getElementById('filterSuit').value = '';
-      document.getElementById('filterPosition').value = '';
-      currentHistoryPage = 1;
-      renderHistory();
-    });
-  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
