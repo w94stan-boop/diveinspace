@@ -233,6 +233,145 @@ html, body {
   font-weight: 200;
 }
 
+.spread-recommendation {
+  margin-top: 25px;
+  padding: 25px;
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.recommendation-icon {
+  font-size: 1.5rem;
+}
+
+.recommendation-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.spread-card {
+  margin-bottom: 15px;
+}
+
+.spread-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.spread-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.spread-cards {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--gold);
+  background: rgba(212, 168, 83, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.spread-positions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.spread-position-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.75rem;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.spread-position-index {
+  width: 22px;
+  height: 22px;
+  background: var(--gold);
+  color: var(--deep-space);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+
+.spread-position-name {
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.spread-position-meaning {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.question-type-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--text-primary);
+  background: rgba(212, 168, 83, 0.15);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.recommendation-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.recommendation-suggestions div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommendation-suggestions .suggestion-icon {
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+
 #stage2 {
   background: rgba(5, 8, 16, 0.95);
 }
@@ -546,6 +685,20 @@ html, body {
   color: var(--text-muted);
   letter-spacing: 0.2em;
   margin-bottom: 15px;
+  font-style: italic;
+}
+
+.card-spread-position {
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.card-spread-position-meaning {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
   font-style: italic;
 }
 
@@ -1501,6 +1654,33 @@ html, body {
   .history-header h2 {
     font-size: 1.5rem;
   }
+  
+  .spread-recommendation {
+    padding: 15px;
+  }
+  
+  .spread-position-item {
+    padding: 8px;
+  }
+  
+  .spread-position-index {
+    width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+  
+  .spread-name {
+    font-size: 1.1rem;
+  }
+  
+  .spread-description {
+    font-size: 0.75rem;
+  }
+  
+  .spread-cards {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
 }
 </style>
 </head>
@@ -1526,6 +1706,22 @@ html, body {
     <div class="question-label" id="questionLabel">心中默念你的问题</div>
     <textarea class="question-input" id="questionInput" placeholder="请输入你想问的问题..." rows="4"></textarea>
     <div class="input-hint">清晰的问题将引导你找到答案</div>
+    
+    <div class="spread-recommendation" id="spreadRecommendation" style="display: none;">
+      <div class="recommendation-header">
+        <div class="recommendation-icon">🔮</div>
+        <div class="recommendation-title">为你匹配的牌阵</div>
+      </div>
+      <div class="spread-card" id="spreadCard">
+        <div class="spread-name" id="spreadName"></div>
+        <div class="spread-description" id="spreadDescription"></div>
+        <div class="spread-cards" id="spreadCards"></div>
+        <div class="spread-positions" id="spreadPositions"></div>
+      </div>
+      <div class="question-type-tag" id="questionTypeTag"></div>
+      <div class="recommendation-suggestions" id="recommendationSuggestions"></div>
+    </div>
+    
     <div class="ai-status-indicator" id="aiStatusIndicator">
       <span class="ai-status-dot" id="aiStatusDot"></span>
       <span class="ai-status-text" id="aiStatusText">AI解读未启用</span>
@@ -2413,22 +2609,36 @@ async function streamApi(prompt, config, onChunk, onError) {
 }
 
 function buildTarotPrompt(question, summaries) {
+  const spreadName = currentSpread ? currentSpread.name : '三牌阵';
   const cardDetails = summaries.map((s, i) => {
-    const positionNames = ['当前状态', '挑战/阻碍', '结果/指引'];
-    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」【${positionNames[i]}】：${s.meaning}`;
+    const positionName = currentSpread && currentSpread.positions[i] 
+      ? currentSpread.positions[i].name 
+      : ['当前状态', '挑战/阻碍', '结果/指引'][i] || `位置${i + 1}`;
+    return `${i + 1}. ${s.isReversed ? '逆位' : '正位'}「${s.name}」【${positionName}】：${s.meaning}`;
   }).join('\n');
+
+  let positionDescription = '';
+  if (currentSpread) {
+    positionDescription = currentSpread.positions.map((pos, i) => {
+      return `- 第${i + 1}张【${pos.name}】：${pos.meaning}`;
+    }).join('\n');
+  } else {
+    positionDescription = `- 第一张：代表当前的状态和能量
+- 第二张：代表面临的挑战或需要注意的问题
+- 第三张：代表未来的可能性和指引`;
+  }
 
   return `用户的问题：${question || '未提出具体问题'}
 
-抽到的三张塔罗牌及其位置含义：
+使用牌阵：${spreadName}
+
+抽到的塔罗牌及其位置含义：
 ${cardDetails}
 
 【位置说明】
-- 第一张：代表当前的状态和能量
-- 第二张：代表面临的挑战或需要注意的问题
-- 第三张：代表未来的可能性和指引
+${positionDescription}
 
-请结合用户的问题和三张牌的组合，进行一次深度的塔罗牌解读。`;
+请结合用户的问题和抽到的牌阵组合，进行一次深度的塔罗牌解读。`;
 }
 
 const MAJOR_ARCANA = [
@@ -2523,10 +2733,239 @@ const MINOR_ARCANA = {
   ]
 };
 
+const QUESTION_TYPES = [
+  {
+    id: 'love',
+    name: '爱情关系',
+    description: '关于爱情、婚姻、伴侣关系的问题',
+    keywords: ['爱', '情', '婚姻', '伴侣', '恋爱', '感情', '喜欢', '暗恋', '分手', '复合', '求婚', '约会', '暧昧', '情人', '对象', '另一半', '配偶'],
+    relatedKeywords: ['关系', '亲密', '承诺', '选择', '三角', '出轨', '异地']
+  },
+  {
+    id: 'career',
+    name: '事业工作',
+    description: '关于工作、职业发展、事业规划的问题',
+    keywords: ['工作', '事业', '职业', '公司', '老板', '同事', '升职', '加薪', '跳槽', '面试', '创业', '项目', '职场', '团队', '领导', '职位'],
+    relatedKeywords: ['发展', '机会', '挑战', '竞争', '合作', '决策', '方向']
+  },
+  {
+    id: 'finance',
+    name: '财富金钱',
+    description: '关于财务、投资、金钱的问题',
+    keywords: ['钱', '财', '富', '投资', '股票', '理财', '赚钱', '收入', '支出', '债务', '贷款', '储蓄', '奖金', '工资', '生意', '利润', '亏损'],
+    relatedKeywords: ['资源', '价值', '机会', '风险', '稳定', '增长']
+  },
+  {
+    id: 'health',
+    name: '健康身体',
+    description: '关于身体、心理、健康的问题',
+    keywords: ['健康', '身体', '病', '医院', '治疗', '康复', '心理', '压力', '焦虑', '抑郁', '失眠', '疲劳', '养生', '运动', '饮食'],
+    relatedKeywords: ['状态', '能量', '平衡', '疗愈', '恢复', '预防']
+  },
+  {
+    id: 'family',
+    name: '家庭亲情',
+    description: '关于家庭、亲情、人际关系的问题',
+    keywords: ['家庭', '父母', '孩子', '亲情', '亲戚', '家人', '代沟', '和解', '沟通', '支持', '责任', '传承'],
+    relatedKeywords: ['关系', '和谐', '冲突', '理解', '关爱', '成长']
+  },
+  {
+    id: 'education',
+    name: '学业学习',
+    description: '关于学习、考试、教育的问题',
+    keywords: ['学习', '考试', '成绩', '学校', '专业', '考研', '留学', '毕业', '论文', '作业', '导师', '课程', '知识', '技能'],
+    relatedKeywords: ['成长', '发展', '机会', '选择', '方向', '目标']
+  },
+  {
+    id: 'future',
+    name: '未来发展',
+    description: '关于未来方向、人生规划的问题',
+    keywords: ['未来', '规划', '方向', '前途', '命运', '人生', '目标', '梦想', '愿望', '选择', '决定', '机会', '挑战', '转变', '新开始'],
+    relatedKeywords: ['道路', '旅程', '方向', '可能性', '机遇', '成长']
+  },
+  {
+    id: 'decision',
+    name: '决策选择',
+    description: '关于需要做出决定或选择的问题',
+    keywords: ['选', '决定', '选择', '要不要', '应该', '是否', '哪个', '怎么办', '如何', '取舍', '权衡', '利弊'],
+    relatedKeywords: ['方案', '路径', '后果', '影响', '建议', '指导']
+  },
+  {
+    id: 'spirituality',
+    name: '心灵成长',
+    description: '关于心灵成长、自我探索、灵性的问题',
+    keywords: ['心灵', '灵性', '成长', '修行', '冥想', '觉醒', '自我', '探索', '使命', '意义', '信仰', '能量', '直觉', '正念'],
+    relatedKeywords: ['内在', '智慧', '意识', '转化', '疗愈', '觉醒']
+  },
+  {
+    id: 'missing',
+    name: '失物寻人',
+    description: '关于寻找失物或失联人员的问题',
+    keywords: ['丢', '找', '失踪', '失联', '丢失', '寻找', '物品', '东西', '人', '在哪里', '位置'],
+    relatedKeywords: ['方向', '线索', '发现', '归还', '重逢']
+  }
+];
+
+const TAROT_SPREADS = [
+  {
+    id: 'three-card',
+    name: '三牌阵',
+    description: '最经典的牌阵，适合大多数问题',
+    cardCount: 3,
+    positions: [
+      { index: 0, name: '当前状态', meaning: '代表你现在所处的状况和能量' },
+      { index: 1, name: '挑战阻碍', meaning: '代表你面临的挑战或需要注意的问题' },
+      { index: 2, name: '结果指引', meaning: '代表未来的可能性和指引' }
+    ],
+    suitableFor: ['love', 'career', 'finance', 'future', 'decision', 'spirituality'],
+    complexity: 1
+  },
+  {
+    id: 'celtic-cross',
+    name: '凯尔特十字',
+    description: '最全面的牌阵，适合复杂问题的深度解读',
+    cardCount: 10,
+    positions: [
+      { index: 0, name: '核心问题', meaning: '问题的核心和本质' },
+      { index: 1, name: '障碍', meaning: '阻碍你前进的因素' },
+      { index: 2, name: '根源', meaning: '问题的深层根源' },
+      { index: 3, name: '过去', meaning: '过去的影响和背景' },
+      { index: 4, name: '未来', meaning: '未来的发展趋势' },
+      { index: 5, name: '外部影响', meaning: '外部环境和他人的影响' },
+      { index: 6, name: '内在感受', meaning: '你的内心感受和直觉' },
+      { index: 7, name: '建议', meaning: '宇宙给你的建议' },
+      { index: 8, name: '期望', meaning: '你所期望的结果' },
+      { index: 9, name: '最终结果', meaning: '最终的结果和答案' }
+    ],
+    suitableFor: ['love', 'career', 'future', 'spirituality', 'family'],
+    complexity: 3
+  },
+  {
+    id: 'relationship',
+    name: '关系牌阵',
+    description: '专门用于解读两人关系的牌阵',
+    cardCount: 6,
+    positions: [
+      { index: 0, name: '你的感受', meaning: '你对这段关系的真实感受' },
+      { index: 1, name: '对方感受', meaning: '对方对你的真实感受' },
+      { index: 2, name: '你的需求', meaning: '你在关系中的需求' },
+      { index: 3, name: '对方需求', meaning: '对方在关系中的需求' },
+      { index: 4, name: '潜在问题', meaning: '关系中隐藏的问题' },
+      { index: 5, name: '未来走向', meaning: '关系的未来发展方向' }
+    ],
+    suitableFor: ['love', 'family'],
+    complexity: 2
+  },
+  {
+    id: 'yes-no',
+    name: '是非牌阵',
+    description: '简单直接的是非问题答案',
+    cardCount: 1,
+    positions: [
+      { index: 0, name: '答案', meaning: '正位代表肯定，逆位代表否定' }
+    ],
+    suitableFor: ['decision'],
+    complexity: 1
+  },
+  {
+    id: 'timeline',
+    name: '时间流牌阵',
+    description: '解读过去、现在、未来的时间发展',
+    cardCount: 5,
+    positions: [
+      { index: 0, name: '过去', meaning: '过去发生的事情和影响' },
+      { index: 1, name: '现在', meaning: '当前的状况和能量' },
+      { index: 2, name: '未来', meaning: '近期未来的发展' },
+      { index: 3, name: '挑战', meaning: '需要面对的挑战' },
+      { index: 4, name: '结果', meaning: '最终的结果和指引' }
+    ],
+    suitableFor: ['future', 'career', 'love'],
+    complexity: 2
+  },
+  {
+    id: 'money',
+    name: '财富牌阵',
+    description: '专门用于解读财务状况和金钱运势',
+    cardCount: 4,
+    positions: [
+      { index: 0, name: '当前财务', meaning: '当前的财务状况' },
+      { index: 1, name: '收入来源', meaning: '收入来源和机会' },
+      { index: 2, name: '支出问题', meaning: '支出和潜在问题' },
+      { index: 3, name: '财富建议', meaning: '关于财富的建议和指引' }
+    ],
+    suitableFor: ['finance'],
+    complexity: 2
+  },
+  {
+    id: 'health',
+    name: '健康牌阵',
+    description: '解读身体和心理健康状况',
+    cardCount: 4,
+    positions: [
+      { index: 0, name: '当前状态', meaning: '当前的健康状态' },
+      { index: 1, name: '潜在问题', meaning: '潜在的健康问题' },
+      { index: 2, name: '疗愈方向', meaning: '适合的疗愈方向' },
+      { index: 3, name: '健康建议', meaning: '保持健康的建议' }
+    ],
+    suitableFor: ['health'],
+    complexity: 2
+  },
+  {
+    id: 'career',
+    name: '事业牌阵',
+    description: '解读职业发展和工作问题',
+    cardCount: 5,
+    positions: [
+      { index: 0, name: '当前状况', meaning: '当前的工作状况' },
+      { index: 1, name: '优势', meaning: '你的优势和能力' },
+      { index: 2, name: '挑战', meaning: '工作中的挑战' },
+      { index: 3, name: '机会', meaning: '未来的机会' },
+      { index: 4, name: '建议', meaning: '事业发展的建议' }
+    ],
+    suitableFor: ['career', 'education'],
+    complexity: 2
+  },
+  {
+    id: 'decision',
+    name: '决策牌阵',
+    description: '帮助做出艰难决定的牌阵',
+    cardCount: 7,
+    positions: [
+      { index: 0, name: '现状', meaning: '当前的状况' },
+      { index: 1, name: '选项A', meaning: '选择A的优缺点' },
+      { index: 2, name: '选项B', meaning: '选择B的优缺点' },
+      { index: 3, name: '隐藏因素', meaning: '隐藏的因素和影响' },
+      { index: 4, name: '你的直觉', meaning: '你的直觉和感受' },
+      { index: 5, name: '他人建议', meaning: '他人的建议和影响' },
+      { index: 6, name: '最佳选择', meaning: '最适合你的选择' }
+    ],
+    suitableFor: ['decision', 'career', 'love'],
+    complexity: 3
+  },
+  {
+    id: 'spirituality',
+    name: '灵性牌阵',
+    description: '用于心灵成长和自我探索',
+    cardCount: 6,
+    positions: [
+      { index: 0, name: '当前意识', meaning: '当前的意识状态' },
+      { index: 1, name: '灵魂课题', meaning: '当前的灵魂课题' },
+      { index: 2, name: '指引', meaning: '宇宙给你的指引' },
+      { index: 3, name: '障碍', meaning: '灵性成长的障碍' },
+      { index: 4, name: '潜能', meaning: '未开发的潜能' },
+      { index: 5, name: '使命', meaning: '你的灵魂使命' }
+    ],
+    suitableFor: ['spirituality'],
+    complexity: 3
+  }
+];
+
 let allCards = [];
 let tarotImages = {};
 let selectedCards = [];
 let cardImagesPreloaded = [];
+let currentSpread = null;
+let detectedQuestionType = null;
 
 function initStarBackground() {
   const bg = document.getElementById('star-bg');
@@ -2552,6 +2991,154 @@ function initStarBackground() {
     comet.style.animationDelay = `${Math.random() * 8}s`;
     bg.appendChild(comet);
   }
+}
+
+function analyzeQuestion(question) {
+  if (!question || !question.trim()) {
+    return {
+      type: null,
+      confidence: 0,
+      suggestions: ['请输入你的问题，我会为你匹配最适合的牌阵', '例如：我和他的关系会有结果吗？', '例如：我最近的工作运势如何？']
+    };
+  }
+  
+  const q = question.toLowerCase().trim();
+  let bestType = null;
+  let highestScore = 0;
+  
+  QUESTION_TYPES.forEach(type => {
+    let score = 0;
+    
+    type.keywords.forEach(keyword => {
+      if (q.includes(keyword)) {
+        score += 3;
+      }
+    });
+    
+    type.relatedKeywords.forEach(keyword => {
+      if (q.includes(keyword)) {
+        score += 1;
+      }
+    });
+    
+    if (score > highestScore) {
+      highestScore = score;
+      bestType = type;
+    }
+  });
+  
+  const confidence = Math.min(highestScore / 15, 1);
+  
+  let suggestions = [];
+  if (confidence < 0.3) {
+    suggestions = [
+      '你的问题比较模糊，请提供更多细节',
+      '例如：你可以补充说明是关于爱情、事业还是健康方面',
+      '或者描述一下你目前的状况和困惑'
+    ];
+  } else if (confidence < 0.6) {
+    suggestions = [
+      '我已大致理解你的问题',
+      '如果需要更精准的解读，可以补充更多信息',
+      '例如：你所处的具体情境、时间范围等'
+    ];
+  }
+  
+  return {
+    type: bestType,
+    confidence: confidence,
+    suggestions: suggestions
+  };
+}
+
+function matchSpread(questionType) {
+  if (!questionType) {
+    return TAROT_SPREADS.find(s => s.id === 'three-card');
+  }
+  
+  const suitableSpreads = TAROT_SPREADS.filter(spread => 
+    spread.suitableFor.includes(questionType.id)
+  );
+  
+  if (suitableSpreads.length === 0) {
+    return TAROT_SPREADS.find(s => s.id === 'three-card');
+  }
+  
+  suitableSpreads.sort((a, b) => {
+    const aHasExactMatch = a.suitableFor.includes(questionType.id);
+    const bHasExactMatch = b.suitableFor.includes(questionType.id);
+    
+    if (aHasExactMatch && !bHasExactMatch) return -1;
+    if (!aHasExactMatch && bHasExactMatch) return 1;
+    
+    return a.complexity - b.complexity;
+  });
+  
+  return suitableSpreads[0];
+}
+
+function getSpreadSuggestions(question) {
+  const analysis = analyzeQuestion(question);
+  const spread = matchSpread(analysis.type);
+  
+  return {
+    analysis: analysis,
+    spread: spread,
+    question: question
+  };
+}
+
+function updateSpreadRecommendation(question) {
+  const recommendationEl = document.getElementById('spreadRecommendation');
+  const spreadNameEl = document.getElementById('spreadName');
+  const spreadDescriptionEl = document.getElementById('spreadDescription');
+  const spreadCardsEl = document.getElementById('spreadCards');
+  const spreadPositionsEl = document.getElementById('spreadPositions');
+  const questionTypeTagEl = document.getElementById('questionTypeTag');
+  const suggestionsEl = document.getElementById('recommendationSuggestions');
+  
+  if (!question) {
+    recommendationEl.style.display = 'none';
+    return;
+  }
+  
+  const result = getSpreadSuggestions(question);
+  const spread = result.spread;
+  const analysis = result.analysis;
+  
+  spreadNameEl.textContent = spread.name;
+  spreadDescriptionEl.textContent = spread.description;
+  spreadCardsEl.innerHTML = `<span>📦</span> 需要选择 ${spread.cardCount} 张卡牌`;
+  
+  const positionsHtml = spread.positions.map(pos => `
+    <div class="spread-position-item">
+      <div class="spread-position-index">${pos.index + 1}</div>
+      <div>
+        <div class="spread-position-name">${pos.name}</div>
+        <div class="spread-position-meaning">${pos.meaning}</div>
+      </div>
+    </div>
+  `).join('');
+  spreadPositionsEl.innerHTML = positionsHtml;
+  
+  if (analysis.type) {
+    questionTypeTagEl.textContent = `📌 问题类型：${analysis.type.name}`;
+    questionTypeTagEl.style.display = 'inline-block';
+  } else {
+    questionTypeTagEl.style.display = 'none';
+  }
+  
+  if (analysis.suggestions && analysis.suggestions.length > 0) {
+    const suggestionsHtml = analysis.suggestions.map(s => `
+      <div><span class="suggestion-icon">💡</span>${s}</div>
+    `).join('');
+    suggestionsEl.innerHTML = suggestionsHtml;
+    suggestionsEl.style.display = 'flex';
+  } else {
+    suggestionsEl.style.display = 'none';
+  }
+  
+  recommendationEl.style.display = 'block';
 }
 
 function typewriterEffect(element, text, speed = 50, callback) {
@@ -2769,11 +3356,12 @@ function toggleCardSelection(element, card) {
     selectedCards.splice(cardIndex, 1);
     element.classList.remove('selected');
   } else {
-    if (selectedCards.length < 3) {
+    const targetCount = currentSpread ? currentSpread.cardCount : 3;
+    if (selectedCards.length < targetCount) {
       selectedCards.push(card);
       element.classList.add('selected');
       
-      if (selectedCards.length === 3) {
+      if (selectedCards.length === targetCount) {
         setTimeout(() => {
           showResult();
         }, 600);
@@ -2786,7 +3374,8 @@ function toggleCardSelection(element, card) {
 
 function updateSelectedCount() {
   const countEl = document.getElementById('selectedCount');
-  countEl.textContent = `请选择 3 张卡牌 (${selectedCards.length}/3)`;
+  const targetCount = currentSpread ? currentSpread.cardCount : 3;
+  countEl.textContent = `请选择 ${targetCount} 张卡牌 (${selectedCards.length}/${targetCount})`;
 }
 
 function showStage(stageNum) {
@@ -2821,6 +3410,14 @@ function showResult() {
     const meaningTitle = isReversed ? '逆位含义' : '核心含义';
     const meaningText = isReversed ? card.reversed : card.meaning;
     
+    const positionName = currentSpread && currentSpread.positions[index] 
+      ? currentSpread.positions[index].name 
+      : ['当前状态', '挑战阻碍', '结果指引'][index] || `位置${index + 1}`;
+    
+    const positionMeaning = currentSpread && currentSpread.positions[index] 
+      ? currentSpread.positions[index].meaning 
+      : '';
+    
     resultCard.innerHTML = `
       <div class="result-card-image">
         <img src="${imageUrl || ''}" alt="${card.name}" onerror="this.src=''; this.parentElement.style.background='rgba(255, 255, 255, 0.1)';">
@@ -2828,6 +3425,8 @@ function showResult() {
       <div class="result-card-info">
         <div class="card-name">${index + 1}. ${card.name}</div>
         <div class="card-english-name">${card.english}</div>
+        <div class="card-spread-position">📍 ${positionName}</div>
+        ${positionMeaning ? `<div class="card-spread-position-meaning">${positionMeaning}</div>` : ''}
         <div class="card-position">${isReversed ? '逆位' : '正位'}</div>
         <div class="card-meaning-section">
           <div class="card-meaning-title">${meaningTitle}</div>
@@ -3123,12 +3722,21 @@ async function init() {
     shuffleCards();
   }
   
+  document.getElementById('questionInput').addEventListener('input', () => {
+    const question = document.getElementById('questionInput').value.trim();
+    updateSpreadRecommendation(question);
+  });
+  
   document.getElementById('startBtn').addEventListener('click', () => {
     const question = document.getElementById('questionInput').value.trim();
     if (!question) {
       typewriterEffect(document.getElementById('questionLabel'), '请输入你的问题', 60);
       return;
     }
+    
+    const result = getSpreadSuggestions(question);
+    currentSpread = result.spread;
+    detectedQuestionType = result.analysis.type;
     
     const config = getAiConfig();
     if (!config.apiKey || !config.apiEndpoint) {
