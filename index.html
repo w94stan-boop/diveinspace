@@ -744,6 +744,23 @@ html, body {
   text-align: center;
 }
 
+.card-position-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.card-position-meaning {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
 .card-name {
   font-family: 'Cinzel', serif;
   font-size: 1.5rem;
@@ -2958,11 +2975,17 @@ function showResult() {
     const meaningTitle = isReversed ? '逆位含义' : '核心含义';
     const meaningText = isReversed ? card.reversed : card.meaning;
     
+    const positionInfo = currentSpread && currentSpread.positions && currentSpread.positions[index] 
+      ? currentSpread.positions[index] 
+      : { name: `位置${index + 1}`, meaning: '' };
+    
     resultCard.innerHTML = `
       <div class="result-card-image">
         <img src="${imageUrl || ''}" alt="${card.name}" onerror="this.src=''; this.parentElement.style.background='rgba(255, 255, 255, 0.1)';">
       </div>
       <div class="result-card-info">
+        <div class="card-position-label">${positionInfo.name}</div>
+        ${positionInfo.meaning ? `<div class="card-position-meaning">${positionInfo.meaning}</div>` : ''}
         <div class="card-name">${index + 1}. ${card.name}</div>
         <div class="card-english-name">${card.english}</div>
         <div class="card-position">${isReversed ? '逆位' : '正位'}</div>
@@ -2990,7 +3013,8 @@ function showResult() {
       name: card.name,
       isReversed,
       meaning: isReversed ? card.reversed : card.meaning,
-      advice: card.advice
+      advice: card.advice,
+      position: positionInfo.name
     });
   });
   
@@ -3288,7 +3312,14 @@ function generateComprehensiveReading(summaries) {
   reading += `${combinationInsight}\n\n`;
   reading += `从元素角度来看，这组卡牌涉及${elementMeanings}的能量组合。\n\n`;
   reading += `这些元素的互动暗示着你当前需要关注的重点领域。\n\n`;
-  reading += `【核心建议】\n`;
+  
+  reading += `【牌位详解】\n`;
+  summaries.forEach((s, index) => {
+    const positionName = s.position || `位置${index + 1}`;
+    reading += `• ${positionName}：${s.isReversed ? '逆位' : '正位'}「${s.name}」\n  ${s.meaning}\n`;
+  });
+  
+  reading += `\n【核心建议】\n`;
   summaries.forEach((s) => {
     reading += `• ${s.advice}\n`;
   });
