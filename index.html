@@ -1987,9 +1987,12 @@ async function callOpenAI(prompt, config, useProxy = false) {
 
 async function callGemini(prompt, config, useProxy = false) {
   const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash';
-  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
-  const separator = endpoint.includes('?') ? '&' : '?';
-  const targetUrl = `${endpoint}${separator}key=${config.apiKey}`;
+  const baseEndpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}`;
+  
+  const streamEndpoint = `${baseEndpoint}:streamGenerateContent?key=${config.apiKey}`;
+  const nonStreamEndpoint = `${baseEndpoint}:generateContent?key=${config.apiKey}`;
+  
+  const targetUrl = config.apiType === 'stream' || useProxy ? streamEndpoint : nonStreamEndpoint;
 
   const requestBody = {
     contents: [{ parts: [{ text: `你是专业塔罗牌解读师，擅长深度分析和精准预测。解读风格：专业、深入、全面。\n\n【输出格式】\n## 核心讯息\n- 一句话总结本次占卜的核心内容\n\n## 牌面详解\n- 逐一解读每张牌的含义（正位/逆位）\n- 分析牌与牌之间的关联和相互影响\n\n## 现状分析\n- 深入分析当前面临的情况和挑战\n- 揭示潜在的问题和机会\n\n## 趋势预测\n- 预测未来发展趋势\n- 指出可能出现的转折点\n\n## 行动建议\n- 提供3-5条具体、可操作的建议\n- 针对不同情况给出应对策略\n\n## 注意事项\n- 需要特别注意的事项和警示\n\n【要求】\n- 内容详实，分析深入，避免流于表面\n- 语言清晰，结构分明，逻辑严谨\n- 结论明确，有理有据，建议实用\n- 根据问题复杂度调整详细程度，确保覆盖所有关键点\n\n用户问题：${prompt}` }] }],
@@ -1999,6 +2002,15 @@ async function callGemini(prompt, config, useProxy = false) {
     }
   };
 
+  console.log(`Gemini调用配置:`, {
+    model,
+    targetUrl: targetUrl.substring(0, 100) + '...',
+    useProxy,
+    apiType: config.apiType,
+    maxTokens: config.maxTokens,
+    apiKeyLength: config.apiKey ? config.apiKey.length : 0
+  });
+
   if (useProxy) {
     console.log('使用代理转发模式');
     return fetch(getProxyUrl(), {
@@ -2006,7 +2018,7 @@ async function callGemini(prompt, config, useProxy = false) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         url: targetUrl,
-        headers: {},
+        headers: { 'Content-Type': 'application/json' },
         body: requestBody
       }),
       signal: AbortSignal.timeout(120000)
@@ -2028,6 +2040,14 @@ async function testApiConnection(config) {
     let body;
     let endpoint = config.apiEndpoint;
     
+    console.log('测试API连接配置:', {
+      provider: config.provider,
+      apiType: config.apiType,
+      apiEndpoint: config.apiEndpoint,
+      apiKeyLength: config.apiKey ? config.apiKey.length : 0,
+      model: config.model
+    });
+    
     if (config.provider === 'gemini') {
       body = {
         contents: [{ parts: [{ text: '测试连接' }] }],
@@ -2037,6 +2057,7 @@ async function testApiConnection(config) {
       };
       const separator = endpoint.includes('?') ? '&' : '?';
       endpoint = `${endpoint}${separator}key=${config.apiKey}`;
+      console.log('Gemini完整请求URL:', endpoint);
     } else {
       customHeaders['Authorization'] = `Bearer ${config.apiKey}`;
       body = {
@@ -2049,6 +2070,7 @@ async function testApiConnection(config) {
 
     let response;
     if (config.apiType === 'direct') {
+      console.log(`直接连接到: ${endpoint}`);
       response = await fetch(endpoint, {
         method: 'POST',
         headers: customHeaders,
@@ -2070,10 +2092,17 @@ async function testApiConnection(config) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      return { success: false, message: errorData?.error?.message || `连接失败: HTTP ${response.status}` };
+      const errorText = await response.text().catch(() => null);
+      console.error('API连接失败详情:', {
+        status: response.status,
+        errorData,
+        errorText: errorText?.substring(0, 500)
+      });
+      return { success: false, message: errorData?.error?.message || errorText?.substring(0, 200) || `连接失败: HTTP ${response.status}` };
     }
 
     const data = await response.json();
+    console.log('API响应数据:', JSON.stringify(data).substring(0, 300));
     if (data.choices && data.choices.length > 0) {
       return { success: true, message: '连接成功！API密钥有效。' };
     } else if (data.candidates && data.candidates.length > 0) {
@@ -2128,15 +2157,56 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
       }
       
       if (config.provider === 'gemini') {
-        const data = await response.json();
-        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (content) {
-          onChunk(content);
+        if (response.headers.get('content-type')?.includes('text/event-stream') || 
+            response.headers.get('content-type')?.includes('application/json')) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let geminiBuffer = '';
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) break;
+            
+            const chunk = decoder.decode(value);
+            console.log(`Gemini raw chunk: ${chunk.length} bytes`);
+            
+            geminiBuffer += chunk;
+            const lines = geminiBuffer.split('\n');
+            geminiBuffer = lines.pop() || '';
+            
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.substring(6);
+                if (data === '[DONE]') continue;
+                try {
+                  const json = JSON.parse(data);
+                  const content = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (content) {
+                    console.log(`Gemini content: "${content.substring(0, 50)}..."`);
+                    onChunk(content);
+                  }
+                } catch (parseError) {
+                  console.warn('Gemini JSON parse error:', parseError.message, 'Line:', line);
+                }
+              }
+            }
+          }
+          
+          if (onComplete) onComplete();
+          return;
         } else {
-          throw new Error('Gemini API返回格式不正确');
+          const data = await response.json();
+          console.log('Gemini non-stream response:', JSON.stringify(data).substring(0, 200));
+          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (content) {
+            onChunk(content);
+          } else {
+            throw new Error('Gemini API返回格式不正确');
+          }
+          if (onComplete) onComplete();
+          return;
         }
-        if (onComplete) onComplete();
-        return;
       }
       
       const reader = response.body.getReader();
