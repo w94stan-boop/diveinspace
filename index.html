@@ -826,6 +826,39 @@ html, body {
   backdrop-filter: blur(20px);
 }
 
+.user-question-display {
+  width: 100%;
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.user-question-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.user-question-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+  font-style: italic;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.user-question-display:empty {
+  display: none;
+}
+
 .summary-title {
   font-family: 'Cinzel', serif;
   font-size: 1rem;
@@ -1478,6 +1511,7 @@ html, body {
 <div class="stage" id="stage5">
   <div class="stage4-content">
     <div class="phase-title">The Revelation</div>
+    <div class="user-question-display" id="userQuestionDisplay"></div>
     <div class="result-cards-container" id="resultCardsContainer"></div>
     <div class="reading-summary">
       <div class="summary-title">Reading Summary</div>
@@ -1613,11 +1647,11 @@ const AI_CONFIG_KEY = 'tarot_ai_config';
 const GESTURE_CONFIG_KEY = 'tarot_gesture_config';
 
 const DEFAULT_AI_CONFIG = {
-  provider: 'openai',
-  apiType: 'direct',
-  apiEndpoint: 'https://api.openai.com/v1/chat/completions',
+  provider: 'deepseek',
+  apiType: 'custom',
+  apiEndpoint: 'https://api.deepseek.com/v1/chat/completions',
   apiKey: '',
-  model: 'gpt-4o',
+  model: 'deepseek-chat',
   temperature: 0.7,
   maxTokens: 3000
 };
@@ -1654,7 +1688,7 @@ function getAiConfig() {
         config.maxTokens = 3000;
       }
       if (!config.apiType) {
-        config.apiType = 'direct';
+        config.apiType = 'custom';
       }
       localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
       return config;
@@ -1690,6 +1724,10 @@ function updateAiStatusIndicator() {
 }
 
 const PROXY_URL = 'https://bitter-flower-8a1b.w94stan.workers.dev';
+
+function getProxyUrl() {
+  return PROXY_URL;
+}
 
 class GestureRecognizer {
   constructor(element, config = {}) {
@@ -1871,7 +1909,7 @@ class GestureRecognizer {
   }
 }
 
-async function callOpenAI(prompt, config) {
+async function callOpenAI(prompt, config, useProxy = false) {
   const headers = {
     'Authorization': `Bearer ${config.apiKey}`,
     'Content-Type': 'application/json'
@@ -1916,28 +1954,38 @@ async function callOpenAI(prompt, config) {
 
   const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
   
-  if (config.apiType === 'direct') {
-    return fetch(targetUrl, {
+  console.log('callOpenAI - 准备发送请求:', {
+    useProxy: useProxy,
+    targetUrl: targetUrl,
+    apiKeyLength: config.apiKey ? config.apiKey.length : 0,
+    model: config.model,
+    max_tokens: config.maxTokens
+  });
+  
+  if (useProxy) {
+    console.log('使用代理转发模式');
+    return fetch(getProxyUrl(), {
       method: 'POST',
-      headers: headers,
-      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: targetUrl,
+        headers: headers,
+        body: body
+      }),
       signal: AbortSignal.timeout(120000)
     });
   }
   
-  return fetch(PROXY_URL, {
+  console.log('使用直接连接模式');
+  return fetch(targetUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      url: targetUrl,
-      headers: headers,
-      body: body
-    }),
+    headers: headers,
+    body: JSON.stringify(body),
     signal: AbortSignal.timeout(120000)
   });
 }
 
-async function callGemini(prompt, config) {
+async function callGemini(prompt, config, useProxy = false) {
   const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash';
   const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
   const separator = endpoint.includes('?') ? '&' : '?';
@@ -1951,23 +1999,25 @@ async function callGemini(prompt, config) {
     }
   };
 
-  if (config.apiType === 'direct') {
-    return fetch(targetUrl, {
+  if (useProxy) {
+    console.log('使用代理转发模式');
+    return fetch(getProxyUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        url: targetUrl,
+        headers: {},
+        body: requestBody
+      }),
       signal: AbortSignal.timeout(120000)
     });
   }
 
-  return fetch(PROXY_URL, {
+  console.log('使用直接连接模式');
+  return fetch(targetUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      url: targetUrl,
-      headers: {},
-      body: requestBody
-    }),
+    body: JSON.stringify(requestBody),
     signal: AbortSignal.timeout(120000)
   });
 }
@@ -2047,18 +2097,19 @@ async function testApiConnection(config) {
 }
 
 async function streamApi(prompt, config, onChunk, onError, onComplete) {
-  const maxRetries = 3;
+  const maxRetries = 2;
   let retryCount = 0;
   let buffer = '';
+  let useProxy = false;
   
   while (retryCount < maxRetries) {
     try {
       let response;
       
       if (config.provider === 'gemini') {
-        response = await callGemini(prompt, config);
+        response = await callGemini(prompt, config, useProxy);
       } else {
-        response = await callOpenAI(prompt, config);
+        response = await callOpenAI(prompt, config, useProxy);
       }
       
       if (!response.ok) {
@@ -2076,6 +2127,18 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
         }
       }
       
+      if (config.provider === 'gemini') {
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (content) {
+          onChunk(content);
+        } else {
+          throw new Error('Gemini API返回格式不正确');
+        }
+        if (onComplete) onComplete();
+        return;
+      }
+      
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
       
@@ -2087,37 +2150,24 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
         const chunk = decoder.decode(value);
         console.log(`Raw chunk received: ${chunk.length} bytes`);
         
-        if (config.provider !== 'gemini') {
-          buffer += chunk;
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.substring(6);
-              if (data === '[DONE]') continue;
-              try {
-                const json = JSON.parse(data);
-                const content = json.choices?.[0]?.delta?.content;
-                if (content) {
-                  console.log(`Parsed content: "${content.substring(0, 50)}..."`);
-                  onChunk(content);
-                }
-              } catch (parseError) {
-                console.warn('JSON parse error:', parseError.message, 'Line:', line);
+        buffer += chunk;
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.substring(6);
+            if (data === '[DONE]') continue;
+            try {
+              const json = JSON.parse(data);
+              const content = json.choices?.[0]?.delta?.content;
+              if (content) {
+                console.log(`Parsed content: "${content.substring(0, 50)}..."`);
+                onChunk(content);
               }
+            } catch (parseError) {
+              console.warn('JSON parse error:', parseError.message, 'Line:', line);
             }
-          }
-        } else {
-          try {
-            const json = JSON.parse(chunk);
-            const content = json.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (content) {
-              console.log(`Gemini content: "${content.substring(0, 50)}..."`);
-              onChunk(content);
-            }
-          } catch (parseError) {
-            console.warn('Gemini JSON parse error:', parseError.message);
           }
         }
       }
@@ -2130,7 +2180,9 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
       
       if (error.name === 'TimeoutError') {
         if (retryCount < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+          useProxy = true;
+          console.log('直连超时，切换到代理模式');
+          await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
         }
         onError('请求超时，请检查网络连接');
@@ -2140,9 +2192,19 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
       } else if (error.message.includes('API密钥无效') || error.message.includes('401')) {
         onError('API密钥无效，请检查设置');
         return;
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+        if (retryCount < maxRetries) {
+          useProxy = true;
+          console.log('直连失败（CORS或网络错误），切换到代理模式');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
+        }
+        onError('无法连接到API，请检查网络或尝试使用其他服务商');
       } else {
         if (retryCount < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+          useProxy = true;
+          console.log('直连失败，切换到代理模式');
+          await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
         }
         onError(`AI调用失败: ${error.message}`);
@@ -3147,6 +3209,19 @@ function showResult() {
   });
   
   const question = document.getElementById('questionInput').value.trim();
+  
+  const userQuestionDisplay = document.getElementById('userQuestionDisplay');
+  if (userQuestionDisplay) {
+    if (question) {
+      userQuestionDisplay.innerHTML = `
+        <div class="user-question-label">YOUR QUESTION</div>
+        <div class="user-question-text">${question}</div>
+      `;
+    } else {
+      userQuestionDisplay.innerHTML = '';
+    }
+  }
+  
   saveReadingHistory({
     question: question,
     cards: summaries,
@@ -3161,6 +3236,14 @@ function showResult() {
   if (aiConfig.apiKey && aiConfig.apiEndpoint && aiConfig.provider !== 'local') {
     const question = document.getElementById('questionInput').value.trim();
     const prompt = buildTarotPrompt(question, summaries);
+    
+    console.log('AI配置信息:', {
+      provider: aiConfig.provider,
+      apiType: aiConfig.apiType,
+      apiEndpoint: aiConfig.apiEndpoint,
+      apiKeyLength: aiConfig.apiKey ? aiConfig.apiKey.length : 0,
+      model: aiConfig.model
+    });
     
     summaryTextEl.innerHTML = `
       <div class="generating-indicator">
@@ -3187,7 +3270,7 @@ function showResult() {
         summaryTextEl.innerHTML = formatMarkdown(fallbackText);
         updateLastHistorySummary(fallbackText);
       }
-    }, 10000);
+    }, 30000);
     
     streamApi(prompt, aiConfig, (chunk) => {
       if (fallbackTriggered) return;
@@ -3202,17 +3285,22 @@ function showResult() {
       
       if (error.includes('401') || error.includes('密钥无效')) {
         errorMsg = 'API密钥无效或已过期';
-        suggestion = '建议：请点击右上角⚙重新配置API密钥。';
+        suggestion = '建议：点击右上角⚙重新配置API密钥，或选择「仅使用本地解读」模式。';
       } else if (error.includes('429') || error.includes('频率超限')) {
         errorMsg = 'API调用频率超限';
-        suggestion = '建议：请稍后再试，或升级您的API套餐。';
+        suggestion = '建议：稍后再试，或升级您的API套餐。';
       } else if (error.includes('CORS') || error.includes('Failed to fetch')) {
         errorMsg = '浏览器跨域限制阻止了请求';
         suggestion = '建议：使用本地服务器运行网站（如 python -m http.server），或安装CORS插件。';
       } else if (error.includes('timeout')) {
         errorMsg = '请求超时';
         suggestion = '建议：检查网络连接，或尝试使用其他服务商。';
+      } else if (error.includes('Insufficient Balance') || error.includes('余额')) {
+        errorMsg = 'API账户余额不足';
+        suggestion = '建议：充值API账户，或选择「仅使用本地解读」模式。';
       }
+      
+      clearTimeout(fallbackTimeout);
       
       const fallbackText = generateComprehensiveReading(summaries);
       summaryTextEl.innerHTML = `
@@ -3227,18 +3315,12 @@ function showResult() {
       const streamDuration = Date.now() - streamStartTime;
       console.log(`Stream complete: ${totalChars} chars in ${streamDuration}ms`);
       
-      if (totalChars < 200) {
-        console.warn('Stream response is too short, trying non-streaming API');
-        fetchFullResponse(prompt, aiConfig, (fullText) => {
-          if (fullText && fullText.length > generatedText.length) {
-            generatedText = fullText;
-            summaryTextEl.innerHTML = formatMarkdown(generatedText);
-            console.log(`Fallback successful: ${generatedText.length} chars`);
-          }
-          updateLastHistorySummary(generatedText);
-        });
-      } else {
+      if (totalChars > 0) {
         updateLastHistorySummary(generatedText);
+      } else {
+        const fallbackText = generateComprehensiveReading(summaries);
+        summaryTextEl.innerHTML = formatMarkdown(fallbackText);
+        updateLastHistorySummary(fallbackText);
       }
     });
   } else {
