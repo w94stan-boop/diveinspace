@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星辰塔罗 · 命运指引</title>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@200;300;400;500&display=swap');
 
@@ -584,6 +585,93 @@ html, body {
   background: rgba(212, 168, 83, 0.15);
   border-color: rgba(212, 168, 83, 0.3);
   color: var(--gold-soft);
+}
+
+.camera-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 200px;
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  background: rgba(10, 15, 30, 0.9);
+}
+
+.camera-container canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-status {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.camera-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff9800;
+  animation: blink 1s ease-in-out infinite;
+}
+
+.camera-status-dot.active {
+  background: #4caf50;
+  animation: none;
+}
+
+.camera-status-dot.error {
+  background: #f44336;
+  animation: none;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.camera-toggle-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.camera-toggle-btn:hover {
+  background: rgba(244, 67, 54, 0.8);
+}
+
+@media (max-width: 768px) {
+  .camera-container {
+    width: 140px;
+    height: 105px;
+    top: 70px;
+  }
 }
 
 #stage4 {
@@ -1341,15 +1429,27 @@ html, body {
       <div class="phase-title">CHOOSE YOUR CARDS</div>
       <div class="question-label" id="stage3QuestionLabel">请选择3张卡牌</div>
       <div class="gesture-hints" id="gestureHints">
-        <span class="gesture-hint">← 滑动浏览</span>
-        <span class="gesture-hint">双击确认</span>
-        <span class="gesture-hint">长按取消</span>
+        <span class="gesture-hint">✋ 摆动手掌浏览</span>
+        <span class="gesture-hint">✊ 握拳选定</span>
+        <span class="gesture-hint">👋 挥手取消</span>
       </div>
     </div>
+    
+    <div class="camera-container" id="cameraContainer" style="display: none;">
+      <video id="cameraVideo" autoplay playsinline style="display: none;"></video>
+      <canvas id="cameraCanvas"></canvas>
+      <div class="camera-status" id="cameraStatus">
+        <div class="camera-status-dot" id="cameraStatusDot"></div>
+        <span id="cameraStatusText">初始化摄像头...</span>
+      </div>
+      <div class="camera-toggle-btn" id="cameraToggleBtn" title="关闭摄像头">✕</div>
+    </div>
+    
     <div class="cards-fan-container">
       <div class="cards-fan" id="cardsFan"></div>
     </div>
     <div class="stage3-footer">
+      <button class="btn" id="handGestureBtn" style="font-size: 0.8rem; padding: 8px 20px;">🖐 开启手势控制</button>
       <span class="selected-count" id="selectedCount">请选择 3 张卡牌 (0/3)</span>
     </div>
   </div>
@@ -2449,6 +2549,298 @@ function updateHighlightedCard(index) {
   }
 }
 
+let hands = null;
+let cameraVideo = null;
+let cameraCanvas = null;
+let cameraCtx = null;
+let isHandGestureEnabled = false;
+let lastHandX = 0;
+let lastHandY = 0;
+let handMoveThreshold = 0.15;
+let fistHoldTime = 0;
+let fistHoldThreshold = 500;
+let isFistDetected = false;
+let isFistTriggered = false;
+let lastSwipeTime = 0;
+let swipeCooldown = 800;
+let isProcessingFrame = false;
+
+function initHandGesture() {
+  cameraVideo = document.getElementById('cameraVideo');
+  cameraCanvas = document.getElementById('cameraCanvas');
+  cameraCtx = cameraCanvas.getContext('2d');
+  
+  if (!window.Hands) {
+    updateCameraStatus('error', '手部跟踪库加载失败');
+    return;
+  }
+  
+  hands = new Hands({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }
+  });
+  
+  hands.setOptions({
+    maxNumHands: 1,
+    modelComplexity: 0,
+    minDetectionConfidence: 0.6,
+    minTrackingConfidence: 0.5
+  });
+  
+  hands.onResults(onHandResults);
+}
+
+function startCamera() {
+  if (isHandGestureEnabled) return;
+  
+  initHandGesture();
+  
+  navigator.mediaDevices.getUserMedia({ 
+    video: { 
+      width: 320, 
+      height: 240,
+      facingMode: 'user'
+    },
+    audio: false 
+  })
+  .then(stream => {
+    cameraVideo.srcObject = stream;
+    cameraVideo.onloadedmetadata = () => {
+      cameraCanvas.width = cameraVideo.videoWidth;
+      cameraCanvas.height = cameraVideo.videoHeight;
+      isHandGestureEnabled = true;
+      document.getElementById('cameraContainer').style.display = 'block';
+      document.getElementById('handGestureBtn').textContent = '🖐 关闭手势控制';
+      updateCameraStatus('active', '手势识别已就绪');
+      processHandFrames();
+    };
+  })
+  .catch(err => {
+    console.error('Camera error:', err);
+    updateCameraStatus('error', '无法访问摄像头');
+    isHandGestureEnabled = false;
+  });
+}
+
+function stopCamera() {
+  if (cameraVideo && cameraVideo.srcObject) {
+    const stream = cameraVideo.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach(track => track.stop());
+    cameraVideo.srcObject = null;
+  }
+  
+  isHandGestureEnabled = false;
+  document.getElementById('cameraContainer').style.display = 'none';
+  document.getElementById('handGestureBtn').textContent = '🖐 开启手势控制';
+  
+  if (cameraCtx) {
+    cameraCtx.clearRect(0, 0, cameraCanvas.width, cameraCanvas.height);
+  }
+}
+
+function toggleHandGesture() {
+  if (isHandGestureEnabled) {
+    stopCamera();
+  } else {
+    startCamera();
+  }
+}
+
+function updateCameraStatus(status, text) {
+  const dot = document.getElementById('cameraStatusDot');
+  const textEl = document.getElementById('cameraStatusText');
+  
+  if (dot && textEl) {
+    dot.className = 'camera-status-dot ' + status;
+    textEl.textContent = text;
+  }
+}
+
+async function processHandFrames() {
+  if (!isHandGestureEnabled || !cameraVideo) return;
+  
+  if (!isProcessingFrame) {
+    isProcessingFrame = true;
+    try {
+      await hands.send({ image: cameraVideo });
+    } catch (e) {
+      console.error('Hand processing error:', e);
+    }
+    isProcessingFrame = false;
+  }
+  
+  requestAnimationFrame(processHandFrames);
+}
+
+function onHandResults(results) {
+  if (!cameraCtx || !cameraCanvas) return;
+  
+  cameraCtx.save();
+  cameraCtx.clearRect(0, 0, cameraCanvas.width, cameraCanvas.height);
+  
+  cameraCtx.translate(cameraCanvas.width, 0);
+  cameraCtx.scale(-1, 1);
+  cameraCtx.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+  
+  if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    const landmarks = results.multiHandLandmarks[0];
+    drawHandLandmarks(landmarks);
+    processHandGesture(landmarks);
+  } else {
+    isFistDetected = false;
+    isFistTriggered = false;
+    fistHoldTime = 0;
+  }
+  
+  cameraCtx.restore();
+}
+
+function drawHandLandmarks(landmarks) {
+  const w = cameraCanvas.width;
+  const h = cameraCanvas.height;
+  
+  const connections = [
+    [0, 1], [1, 2], [2, 3], [3, 4],
+    [0, 5], [5, 6], [6, 7], [7, 8],
+    [5, 9], [9, 10], [10, 11], [11, 12],
+    [9, 13], [13, 14], [14, 15], [15, 16],
+    [13, 17], [17, 18], [18, 19], [19, 20],
+    [0, 17]
+  ];
+  
+  cameraCtx.strokeStyle = 'rgba(212, 168, 83, 0.8)';
+  cameraCtx.lineWidth = 2;
+  cameraCtx.beginPath();
+  connections.forEach(([start, end]) => {
+    cameraCtx.moveTo(landmarks[start].x * w, landmarks[start].y * h);
+    cameraCtx.lineTo(landmarks[end].x * w, landmarks[end].y * h);
+  });
+  cameraCtx.stroke();
+  
+  cameraCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  landmarks.forEach(point => {
+    cameraCtx.beginPath();
+    cameraCtx.arc(point.x * w, point.y * h, 3, 0, 2 * Math.PI);
+    cameraCtx.fill();
+  });
+}
+
+function processHandGesture(landmarks) {
+  const palmCenter = {
+    x: (landmarks[0].x + landmarks[9].x) / 2,
+    y: (landmarks[0].y + landmarks[9].y) / 2
+  };
+  
+  const currentHandX = 1 - palmCenter.x;
+  
+  detectHandSwipe(currentHandX);
+  detectFist(landmarks);
+}
+
+function detectHandSwipe(currentHandX) {
+  const now = Date.now();
+  if (now - lastSwipeTime < swipeCooldown) return;
+  
+  const delta = currentHandX - lastHandX;
+  
+  if (Math.abs(delta) > handMoveThreshold) {
+    const direction = delta > 0 ? 'right' : 'left';
+    
+    const cardElements = document.querySelectorAll('.tarot-card');
+    if (cardElements.length === 0) return;
+    
+    const step = direction === 'left' ? 3 : -3;
+    let newIndex = highlightedCardIndex + step;
+    
+    if (newIndex < 0) newIndex = cardElements.length - Math.abs(newIndex);
+    if (newIndex >= cardElements.length) newIndex = newIndex - cardElements.length;
+    
+    updateHighlightedCard(newIndex);
+    
+    lastSwipeTime = now;
+    lastHandX = currentHandX;
+    
+    updateCameraStatus('active', direction === 'left' ? '← 向左浏览' : '→ 向右浏览');
+  }
+  
+  lastHandX = currentHandX;
+}
+
+function detectFist(landmarks) {
+  const fingerTips = [4, 8, 12, 16, 20];
+  const fingerPips = [3, 6, 10, 14, 18];
+  
+  let curledFingers = 0;
+  
+  for (let i = 1; i < 5; i++) {
+    const tip = landmarks[fingerTips[i]];
+    const pip = landmarks[fingerPips[i]];
+    const wrist = landmarks[0];
+    
+    const tipDistance = Math.sqrt(
+      Math.pow(tip.x - wrist.x, 2) + Math.pow(tip.y - wrist.y, 2)
+    );
+    const pipDistance = Math.sqrt(
+      Math.pow(pip.x - wrist.x, 2) + Math.pow(pip.y - wrist.y, 2)
+    );
+    
+    if (tipDistance < pipDistance * 1.1) {
+      curledFingers++;
+    }
+  }
+  
+  const thumbTip = landmarks[4];
+  const indexBase = landmarks[5];
+  const thumbDistance = Math.sqrt(
+    Math.pow(thumbTip.x - indexBase.x, 2) + Math.pow(thumbTip.y - indexBase.y, 2)
+  );
+  
+  const wrist = landmarks[0];
+  const palmSize = Math.sqrt(
+    Math.pow(landmarks[9].x - wrist.x, 2) + Math.pow(landmarks[9].y - wrist.y, 2)
+  );
+  
+  if (thumbDistance < palmSize * 0.8) {
+    curledFingers++;
+  }
+  
+  const isFist = curledFingers >= 4;
+  
+  if (isFist) {
+    if (!isFistDetected) {
+      isFistDetected = true;
+      fistHoldTime = Date.now();
+    } else if (!isFistTriggered) {
+      const holdDuration = Date.now() - fistHoldTime;
+      if (holdDuration >= fistHoldThreshold) {
+        isFistTriggered = true;
+        triggerFistAction();
+      }
+    }
+  } else {
+    isFistDetected = false;
+    isFistTriggered = false;
+    fistHoldTime = 0;
+  }
+}
+
+function triggerFistAction() {
+  if (highlightedCardIndex >= 0) {
+    const cardElements = document.querySelectorAll('.tarot-card');
+    const cardElement = cardElements[highlightedCardIndex];
+    if (cardElement) {
+      const cardId = parseInt(cardElement.dataset.cardId);
+      const card = allCards.find(c => c.id === cardId);
+      if (card) {
+        toggleCardSelection(cardElement, card);
+        updateCameraStatus('active', '✊ 已选中卡牌！');
+      }
+    }
+  }
+}
+
 function toggleCardSelection(element, card) {
   const cardIndex = selectedCards.findIndex(c => c.id === card.id);
   const targetCount = currentSpread ? currentSpread.cardCount : 3;
@@ -2489,6 +2881,10 @@ function showStage(stageNum) {
     gestureRecognizer.destroy();
     gestureRecognizer = null;
     highlightedCardIndex = -1;
+  }
+  
+  if (stageNum !== 4 && isHandGestureEnabled) {
+    stopCamera();
   }
   
   document.getElementById(`stage${stageNum}`).classList.add('active');
@@ -2978,6 +3374,16 @@ async function init() {
     showStage(1);
     document.getElementById('questionInput').value = '';
   });
+  
+  const handGestureBtn = document.getElementById('handGestureBtn');
+  if (handGestureBtn) {
+    handGestureBtn.addEventListener('click', toggleHandGesture);
+  }
+  
+  const cameraToggleBtn = document.getElementById('cameraToggleBtn');
+  if (cameraToggleBtn) {
+    cameraToggleBtn.addEventListener('click', stopCamera);
+  }
   
   modalCloseBtn.addEventListener('click', closeAiSettings);
   
