@@ -1614,7 +1614,7 @@ const GESTURE_CONFIG_KEY = 'tarot_gesture_config';
 
 const DEFAULT_AI_CONFIG = {
   provider: 'openai',
-  apiType: 'custom',
+  apiType: 'direct',
   apiEndpoint: 'https://api.openai.com/v1/chat/completions',
   apiKey: '',
   model: 'gpt-4o',
@@ -1652,8 +1652,11 @@ function getAiConfig() {
       const config = JSON.parse(saved);
       if (!config.maxTokens || config.maxTokens < 1000) {
         config.maxTokens = 3000;
-        localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
       }
+      if (!config.apiType) {
+        config.apiType = 'direct';
+      }
+      localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
       return config;
     }
     return DEFAULT_AI_CONFIG;
@@ -3575,6 +3578,9 @@ async function init() {
     
     if (config.apiType === 'domestic') {
       radioDomestic.checked = true;
+    } else if (config.apiType === 'direct') {
+      const radioDirect = document.querySelector('input[name="apiType"][value="direct"]');
+      if (radioDirect) radioDirect.checked = true;
     } else {
       radioCustom.checked = true;
     }
@@ -3727,7 +3733,7 @@ async function init() {
   saveAiSettingsBtn.addEventListener('click', () => {
     const config = {
       provider: aiProvider.value,
-      apiType: radioDomestic.checked ? 'domestic' : 'custom',
+      apiType: document.querySelector('input[name="apiType"]:checked')?.value || 'custom',
       apiEndpoint: apiEndpoint.value.trim(),
       apiKey: apiKeyInput.value.trim(),
       model: aiModel.value.trim(),
