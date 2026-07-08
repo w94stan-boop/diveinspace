@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宇宙卡牌 · 灵魂指引</title>
+<title>星辰塔罗 · 命运指引</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@200;300;400;500&display=swap');
 
@@ -520,6 +520,32 @@ html, body {
   opacity: 1;
 }
 
+.tarot-card.highlighted {
+  transform: translateY(-20px) scale(1.3) !important;
+  z-index: 200 !important;
+  border-color: rgba(212, 168, 83, 0.8);
+  box-shadow: 0 0 50px rgba(212, 168, 83, 0.5), 0 0 100px rgba(212, 168, 83, 0.3);
+}
+
+.tarot-card.highlighted::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  box-shadow: 0 0 20px var(--gold), inset 0 0 20px rgba(212, 168, 83, 0.3);
+  animation: highlightPulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes highlightPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 .stage3-footer {
   margin-bottom: 40px;
   display: flex;
@@ -533,6 +559,31 @@ html, body {
   font-size: 0.8rem;
   color: var(--text-secondary);
   letter-spacing: 0.1em;
+}
+
+.gesture-hints {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.gesture-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.gesture-hint:hover {
+  background: rgba(212, 168, 83, 0.15);
+  border-color: rgba(212, 168, 83, 0.3);
+  color: var(--gold-soft);
 }
 
 #stage4 {
@@ -1289,6 +1340,11 @@ html, body {
     <div class="stage3-header">
       <div class="phase-title">CHOOSE YOUR CARDS</div>
       <div class="question-label" id="stage3QuestionLabel">请选择3张卡牌</div>
+      <div class="gesture-hints" id="gestureHints">
+        <span class="gesture-hint">← 滑动浏览</span>
+        <span class="gesture-hint">双击确认</span>
+        <span class="gesture-hint">长按取消</span>
+      </div>
     </div>
     <div class="cards-fan-container">
       <div class="cards-fan" id="cardsFan"></div>
@@ -1382,6 +1438,37 @@ html, body {
         </select>
       </div>
       
+      <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: 20px;">
+        <label class="form-label">🎭 手势灵敏度设置</label>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+            <span>滑动阈值</span>
+            <span id="gestureSwipeValue">30px</span>
+          </div>
+          <input type="range" class="form-range" id="gestureSwipeThreshold" min="10" max="80" step="5" value="30">
+          <div class="form-hint">滑动超过此距离才触发浏览切换</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+            <span>双击间隔</span>
+            <span id="gestureDoubleTapValue">300ms</span>
+          </div>
+          <input type="range" class="form-range" id="gestureDoubleTapInterval" min="150" max="500" step="50" value="300">
+          <div class="form-hint">两次点击的最大间隔时间</div>
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+            <span>长按时间</span>
+            <span id="gestureLongPressValue">500ms</span>
+          </div>
+          <input type="range" class="form-range" id="gestureLongPressDuration" min="300" max="1000" step="100" value="500">
+          <div class="form-hint">触发长按取消的最短时间</div>
+        </div>
+      </div>
+      
       <div class="form-status" id="apiTestStatus"></div>
     </div>
     <div class="modal-footer">
@@ -1395,6 +1482,7 @@ html, body {
 const TAROT_DATA_URL = 'https://raw.githubusercontent.com/w94stan-boop/tarot-images/main/images/manifest.json';
 
 const AI_CONFIG_KEY = 'tarot_ai_config';
+const GESTURE_CONFIG_KEY = 'tarot_gesture_config';
 
 const DEFAULT_AI_CONFIG = {
   provider: 'openai',
@@ -1405,6 +1493,29 @@ const DEFAULT_AI_CONFIG = {
   temperature: 0.7,
   maxTokens: 1000
 };
+
+const DEFAULT_GESTURE_CONFIG = {
+  swipeThreshold: 30,
+  doubleTapInterval: 300,
+  longPressDuration: 500
+};
+
+function getGestureConfig() {
+  try {
+    const saved = localStorage.getItem(GESTURE_CONFIG_KEY);
+    return saved ? JSON.parse(saved) : DEFAULT_GESTURE_CONFIG;
+  } catch {
+    return DEFAULT_GESTURE_CONFIG;
+  }
+}
+
+function saveGestureConfig(config) {
+  try {
+    localStorage.setItem(GESTURE_CONFIG_KEY, JSON.stringify(config));
+  } catch (e) {
+    console.error('Failed to save gesture config:', e);
+  }
+}
 
 function getAiConfig() {
   try {
@@ -1440,6 +1551,186 @@ function updateAiStatusIndicator() {
 }
 
 const PROXY_URL = 'https://bitter-flower-8a1b.w94stan.workers.dev';
+
+class GestureRecognizer {
+  constructor(element, config = {}) {
+    this.element = element;
+    this.config = { ...DEFAULT_GESTURE_CONFIG, ...config };
+    
+    this.startX = 0;
+    this.startY = 0;
+    this.lastTapTime = 0;
+    this.longPressTimer = null;
+    this.isLongPressTriggered = false;
+    this.isSwiping = false;
+    
+    this.onSwipe = null;
+    this.onDoubleTap = null;
+    this.onLongPress = null;
+    
+    this.bindEvents();
+  }
+  
+  bindEvents() {
+    this.element.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+    this.element.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    this.element.addEventListener('touchend', this.handleTouchEnd.bind(this));
+    this.element.addEventListener('touchcancel', this.handleTouchCancel.bind(this));
+    
+    this.element.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.element.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    this.element.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+  }
+  
+  handleTouchStart(e) {
+    if (e.touches.length !== 1) return;
+    
+    const touch = e.touches[0];
+    this.startX = touch.clientX;
+    this.startY = touch.clientY;
+    this.isLongPressTriggered = false;
+    this.isSwiping = false;
+    
+    this.startLongPressTimer();
+  }
+  
+  handleTouchMove(e) {
+    if (e.touches.length !== 1) return;
+    
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - this.startX;
+    const deltaY = touch.clientY - this.startY;
+    
+    if (Math.abs(deltaX) > this.config.swipeThreshold || Math.abs(deltaY) > this.config.swipeThreshold) {
+      this.cancelLongPressTimer();
+      this.isSwiping = true;
+    }
+  }
+  
+  handleTouchEnd(e) {
+    if (e.changedTouches.length !== 1) return;
+    
+    const touch = e.changedTouches[0];
+    this.handleEnd(touch.clientX, touch.clientY);
+  }
+  
+  handleTouchCancel() {
+    this.cancelLongPressTimer();
+    this.isSwiping = false;
+    this.isLongPressTriggered = false;
+  }
+  
+  handleMouseDown(e) {
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+    this.isLongPressTriggered = false;
+    this.isSwiping = false;
+    
+    this.startLongPressTimer();
+  }
+  
+  handleMouseMove(e) {
+    const deltaX = e.clientX - this.startX;
+    const deltaY = e.clientY - this.startY;
+    
+    if (Math.abs(deltaX) > this.config.swipeThreshold || Math.abs(deltaY) > this.config.swipeThreshold) {
+      this.cancelLongPressTimer();
+      this.isSwiping = true;
+    }
+  }
+  
+  handleMouseUp(e) {
+    this.handleEnd(e.clientX, e.clientY);
+  }
+  
+  handleMouseLeave() {
+    this.cancelLongPressTimer();
+    this.isSwiping = false;
+    this.isLongPressTriggered = false;
+  }
+  
+  handleEnd(endX, endY) {
+    this.cancelLongPressTimer();
+    
+    if (this.isLongPressTriggered) {
+      if (this.onLongPress) {
+        this.onLongPress({
+          x: endX,
+          y: endY,
+          startX: this.startX,
+          startY: this.startY
+        });
+      }
+      return;
+    }
+    
+    const deltaX = endX - this.startX;
+    const deltaY = endY - this.startY;
+    
+    if (this.isSwiping && Math.abs(deltaX) > this.config.swipeThreshold) {
+      const direction = deltaX > 0 ? 'right' : 'left';
+      if (this.onSwipe) {
+        this.onSwipe({
+          direction: direction,
+          deltaX: deltaX,
+          deltaY: deltaY,
+          startX: this.startX,
+          startY: this.startY,
+          endX: endX,
+          endY: endY
+        });
+      }
+      return;
+    }
+    
+    const now = Date.now();
+    const timeSinceLastTap = now - this.lastTapTime;
+    
+    if (timeSinceLastTap < this.config.doubleTapInterval && timeSinceLastTap > 0) {
+      if (this.onDoubleTap) {
+        this.onDoubleTap({
+          x: endX,
+          y: endY,
+          interval: timeSinceLastTap
+        });
+      }
+      this.lastTapTime = 0;
+    } else {
+      this.lastTapTime = now;
+    }
+  }
+  
+  startLongPressTimer() {
+    this.longPressTimer = setTimeout(() => {
+      this.isLongPressTriggered = true;
+    }, this.config.longPressDuration);
+  }
+  
+  cancelLongPressTimer() {
+    if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer);
+      this.longPressTimer = null;
+    }
+  }
+  
+  updateConfig(newConfig) {
+    this.config = { ...this.config, ...newConfig };
+  }
+  
+  destroy() {
+    this.cancelLongPressTimer();
+    this.element.removeEventListener('touchstart', this.handleTouchStart);
+    this.element.removeEventListener('touchmove', this.handleTouchMove);
+    this.element.removeEventListener('touchend', this.handleTouchEnd);
+    this.element.removeEventListener('touchcancel', this.handleTouchCancel);
+    
+    this.element.removeEventListener('mousedown', this.handleMouseDown);
+    this.element.removeEventListener('mousemove', this.handleMouseMove);
+    this.element.removeEventListener('mouseup', this.handleMouseUp);
+    this.element.removeEventListener('mouseleave', this.handleMouseLeave);
+  }
+}
 
 async function callOpenAI(prompt, config) {
   const headers = {
@@ -1781,6 +2072,8 @@ let tarotImages = {};
 let selectedCards = [];
 let cardImagesPreloaded = [];
 let currentSpread = null;
+let gestureRecognizer = null;
+let highlightedCardIndex = -1;
 
 const TAROT_SPREADS = [
   { id: 'three-card', name: '三牌阵', description: '经典的三张牌牌阵，适合快速了解过去、现在、未来的趋势', cardCount: 3, complexity: 1, suitableFor: ['love','career','finance','health','family','study','future','decision','spiritual','lost'], positions: [{index:0,name:'过去',meaning:'影响当前情况的历史因素'},{index:1,name:'现在',meaning:'当前的能量和核心状况'},{index:2,name:'未来',meaning:'可能的发展方向'}] },
@@ -2050,6 +2343,7 @@ function renderCardsFan() {
     const tarotCard = document.createElement('div');
     tarotCard.className = 'tarot-card';
     tarotCard.dataset.cardId = card.id;
+    tarotCard.dataset.cardIndex = index;
     
     const checkMark = document.createElement('div');
     checkMark.className = 'check-mark';
@@ -2070,6 +2364,89 @@ function renderCardsFan() {
     
     container.appendChild(tarotCard);
   });
+  
+  initGestureControl();
+}
+
+function initGestureControl() {
+  const container = document.getElementById('cardsFan');
+  if (!container) return;
+  
+  if (gestureRecognizer) {
+    gestureRecognizer.destroy();
+  }
+  
+  const gestureConfig = getGestureConfig();
+  gestureRecognizer = new GestureRecognizer(container, gestureConfig);
+  
+  gestureRecognizer.onSwipe = (event) => {
+    handleSwipeGesture(event);
+  };
+  
+  gestureRecognizer.onDoubleTap = (event) => {
+    handleDoubleTapGesture(event);
+  };
+  
+  gestureRecognizer.onLongPress = (event) => {
+    handleLongPressGesture(event);
+  };
+}
+
+function handleSwipeGesture(event) {
+  const cardElements = document.querySelectorAll('.tarot-card');
+  if (cardElements.length === 0) return;
+  
+  const direction = event.direction;
+  const step = direction === 'left' ? 1 : -1;
+  
+  let newIndex = highlightedCardIndex + step;
+  if (newIndex < 0) newIndex = cardElements.length - 1;
+  if (newIndex >= cardElements.length) newIndex = 0;
+  
+  updateHighlightedCard(newIndex);
+}
+
+function handleDoubleTapGesture(event) {
+  if (highlightedCardIndex >= 0) {
+    const cardElements = document.querySelectorAll('.tarot-card');
+    const cardElement = cardElements[highlightedCardIndex];
+    if (cardElement) {
+      const cardId = parseInt(cardElement.dataset.cardId);
+      const card = allCards.find(c => c.id === cardId);
+      if (card) {
+        toggleCardSelection(cardElement, card);
+      }
+    }
+  }
+}
+
+function handleLongPressGesture(event) {
+  if (highlightedCardIndex >= 0) {
+    const cardElements = document.querySelectorAll('.tarot-card');
+    const cardElement = cardElements[highlightedCardIndex];
+    if (cardElement && cardElement.classList.contains('selected')) {
+      const cardId = parseInt(cardElement.dataset.cardId);
+      const card = allCards.find(c => c.id === cardId);
+      if (card) {
+        toggleCardSelection(cardElement, card);
+      }
+    }
+  }
+}
+
+function updateHighlightedCard(index) {
+  const cardElements = document.querySelectorAll('.tarot-card');
+  
+  if (highlightedCardIndex >= 0 && highlightedCardIndex < cardElements.length) {
+    cardElements[highlightedCardIndex].classList.remove('highlighted');
+  }
+  
+  highlightedCardIndex = index;
+  
+  if (highlightedCardIndex >= 0 && highlightedCardIndex < cardElements.length) {
+    cardElements[highlightedCardIndex].classList.add('highlighted');
+    cardElements[highlightedCardIndex].style.zIndex = cardElements.length + 1;
+  }
 }
 
 function toggleCardSelection(element, card) {
@@ -2107,6 +2484,13 @@ function showStage(stageNum) {
   document.querySelectorAll('.stage').forEach(stage => {
     stage.classList.remove('active');
   });
+  
+  if (stageNum !== 4 && gestureRecognizer) {
+    gestureRecognizer.destroy();
+    gestureRecognizer = null;
+    highlightedCardIndex = -1;
+  }
+  
   document.getElementById(`stage${stageNum}`).classList.add('active');
 }
 
@@ -2484,6 +2868,13 @@ async function init() {
   const radioDomestic = document.querySelector('input[name="apiType"][value="domestic"]');
   const radioCustom = document.querySelector('input[name="apiType"][value="custom"]');
   
+  const gestureSwipeThreshold = document.getElementById('gestureSwipeThreshold');
+  const gestureDoubleTapInterval = document.getElementById('gestureDoubleTapInterval');
+  const gestureLongPressDuration = document.getElementById('gestureLongPressDuration');
+  const gestureSwipeValue = document.getElementById('gestureSwipeValue');
+  const gestureDoubleTapValue = document.getElementById('gestureDoubleTapValue');
+  const gestureLongPressValue = document.getElementById('gestureLongPressValue');
+  
   const providerEndpoints = {
     openai: 'https://api.openai.com/v1/chat/completions',
     gemini: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
@@ -2533,6 +2924,14 @@ async function init() {
     }
     
     updateEndpointAndModel();
+    
+    const gestureConfig = getGestureConfig();
+    gestureSwipeThreshold.value = gestureConfig.swipeThreshold;
+    gestureDoubleTapInterval.value = gestureConfig.doubleTapInterval;
+    gestureLongPressDuration.value = gestureConfig.longPressDuration;
+    gestureSwipeValue.textContent = `${gestureConfig.swipeThreshold}px`;
+    gestureDoubleTapValue.textContent = `${gestureConfig.doubleTapInterval}ms`;
+    gestureLongPressValue.textContent = `${gestureConfig.longPressDuration}ms`;
   }
   
   function openAiSettings() {
@@ -2600,6 +2999,18 @@ async function init() {
   
   aiProvider.addEventListener('change', updateEndpointAndModel);
   
+  gestureSwipeThreshold.addEventListener('input', (e) => {
+    gestureSwipeValue.textContent = `${e.target.value}px`;
+  });
+  
+  gestureDoubleTapInterval.addEventListener('input', (e) => {
+    gestureDoubleTapValue.textContent = `${e.target.value}ms`;
+  });
+  
+  gestureLongPressDuration.addEventListener('input', (e) => {
+    gestureLongPressValue.textContent = `${e.target.value}ms`;
+  });
+  
   radioDomestic.addEventListener('change', () => {
     aiProvider.value = 'tongyi';
     updateEndpointAndModel();
@@ -2658,6 +3069,18 @@ async function init() {
     };
     
     saveAiConfig(config);
+    
+    const gestureConfig = {
+      swipeThreshold: parseInt(gestureSwipeThreshold.value),
+      doubleTapInterval: parseInt(gestureDoubleTapInterval.value),
+      longPressDuration: parseInt(gestureLongPressDuration.value)
+    };
+    saveGestureConfig(gestureConfig);
+    
+    if (gestureRecognizer) {
+      gestureRecognizer.updateConfig(gestureConfig);
+    }
+    
     updateAiStatusIndicator();
     closeAiSettings();
   });
