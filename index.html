@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>星辰塔罗 · 命运指引</title>
+<title>宇宙卡牌 · 灵魂指引</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@200;300;400;500&display=swap');
 
@@ -1482,7 +1482,7 @@ async function callOpenAI(prompt, config) {
 
 async function callGemini(prompt, config) {
   const model = config.model.includes('gemini') ? config.model : 'gemini-1.5-flash';
-  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const endpoint = config.apiEndpoint || `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent`;
   const separator = endpoint.includes('?') ? '&' : '?';
   const targetUrl = `${endpoint}${separator}key=${config.apiKey}`;
 
@@ -2486,7 +2486,7 @@ async function init() {
   
   const providerEndpoints = {
     openai: 'https://api.openai.com/v1/chat/completions',
-    gemini: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    gemini: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
     tongyi: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
     doubao: 'https://api.doubao.com/v1/chat/completions',
     deepseek: 'https://api.deepseek.com/v1/chat/completions'
@@ -2494,7 +2494,7 @@ async function init() {
   
   const providerModels = {
     openai: 'gpt-4o',
-    gemini: 'gemini-1.5-flash-latest',
+    gemini: 'gemini-1.5-flash',
     tongyi: 'qwen-plus',
     doubao: 'doubao-pro',
     deepseek: 'deepseek-chat'
@@ -2513,9 +2513,16 @@ async function init() {
   function loadAiSettings() {
     const config = getAiConfig();
     aiProvider.value = config.provider;
-    apiEndpoint.value = config.apiEndpoint || providerEndpoints[config.provider] || '';
+    
+    if (config.provider === 'gemini') {
+      apiEndpoint.value = providerEndpoints['gemini'];
+      aiModel.value = providerModels['gemini'];
+    } else {
+      apiEndpoint.value = config.apiEndpoint || providerEndpoints[config.provider] || '';
+      aiModel.value = config.model || providerModels[config.provider] || '';
+    }
+    
     apiKeyInput.value = config.apiKey || '';
-    aiModel.value = config.model || providerModels[config.provider] || '';
     aiTemperature.value = config.temperature;
     aiMaxTokens.value = config.maxTokens;
     
