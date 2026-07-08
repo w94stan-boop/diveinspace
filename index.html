@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星辰塔罗 · 命运指引</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@3.19.0/dist/tf-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@3.19.0/dist/tf-converter.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@3.19.0/dist/tf-backend-webgl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+SC:wght@200;300;400;500&display=swap');
@@ -2114,8 +2117,8 @@ const MINOR_ARCANA = {
     { id: 31, name: '权杖十', english: 'Ten of Wands', meaning: '负担、责任、压力、过度承诺', reversed: '放下负担、寻求帮助', advice: '学会放手，寻求帮助' },
     { id: 32, name: '权杖骑士', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
     { id: 33, name: '权杖王后', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
-    { id: 34, name: '权杖国王', english: 'Queen of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
-    { id: 35, name: '权杖皇后', english: 'King of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
+    { id: 34, name: '权杖国王', english: 'King of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
+    { id: 35, name: '权杖皇后', english: 'Queen of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
   ],
   cups: [
     { id: 36, name: '圣杯一', english: 'Ace of Cups', meaning: '爱、情感、新关系、直觉', reversed: '情感阻塞、拒绝爱', advice: '敞开心扉，接纳爱与情感' },
@@ -2130,8 +2133,8 @@ const MINOR_ARCANA = {
     { id: 45, name: '圣杯十', english: 'Ten of Cups', meaning: '家庭和谐、幸福、满足、团聚', reversed: '家庭冲突、不幸福、分离', advice: '珍惜家庭，维护和谐' },
     { id: 46, name: '圣杯骑士', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
     { id: 47, name: '圣杯王后', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
-    { id: 48, name: '圣杯国王', english: 'Queen of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
-    { id: 49, name: '圣杯皇后', english: 'King of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
+    { id: 48, name: '圣杯国王', english: 'King of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
+    { id: 49, name: '圣杯皇后', english: 'Queen of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
   ],
   swords: [
     { id: 50, name: '宝剑一', english: 'Ace of Swords', meaning: '真理、清晰、新思想、沟通', reversed: '混乱、误解、沟通不畅', advice: '寻求真理，清晰表达' },
@@ -2146,8 +2149,8 @@ const MINOR_ARCANA = {
     { id: 59, name: '宝剑十', english: 'Ten of Swords', meaning: '结束、痛苦、失败、背叛', reversed: '新开始、恢复、希望', advice: '接受结束，期待新开始' },
     { id: 60, name: '宝剑骑士', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
     { id: 61, name: '宝剑王后', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
-    { id: 62, name: '宝剑国王', english: 'Queen of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
-    { id: 63, name: '宝剑皇后', english: 'King of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
+    { id: 62, name: '宝剑国王', english: 'King of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
+    { id: 63, name: '宝剑皇后', english: 'Queen of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
   ],
   pentacles: [
     { id: 64, name: '星币一', english: 'Ace of Pentacles', meaning: '财富、新机会、物质、稳定', reversed: '错失机会、财务问题', advice: '抓住机会，谨慎理财' },
@@ -2162,8 +2165,8 @@ const MINOR_ARCANA = {
     { id: 73, name: '星币十', english: 'Ten of Pentacles', meaning: '财富、家庭、遗产、长期安全', reversed: '家庭问题、财务不稳定', advice: '重视家庭，规划未来' },
     { id: 74, name: '星币骑士', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
     { id: 75, name: '星币王后', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
-    { id: 76, name: '星币国王', english: 'Queen of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
-    { id: 77, name: '星币皇后', english: 'King of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
+    { id: 76, name: '星币国王', english: 'King of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
+    { id: 77, name: '星币皇后', english: 'Queen of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
   ]
 };
 
@@ -2554,15 +2557,10 @@ let cameraVideo = null;
 let cameraCanvas = null;
 let cameraCtx = null;
 let isHandGestureEnabled = false;
-let lastHandX = 0;
-let lastHandY = 0;
-let handMoveThreshold = 0.15;
 let fistHoldTime = 0;
 let fistHoldThreshold = 500;
 let isFistDetected = false;
 let isFistTriggered = false;
-let lastSwipeTime = 0;
-let swipeCooldown = 800;
 let isProcessingFrame = false;
 
 function initHandGesture() {
@@ -2571,13 +2569,18 @@ function initHandGesture() {
   cameraCtx = cameraCanvas.getContext('2d');
   
   if (!window.Hands) {
+    console.error('MediaPipe Hands library not loaded');
     updateCameraStatus('error', '手部跟踪库加载失败');
     return;
   }
   
+  console.log('MediaPipe Hands library loaded successfully');
+  
   hands = new Hands({
     locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+      const url = `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+      console.log('Loading MediaPipe file:', url);
+      return url;
     }
   });
   
@@ -2589,6 +2592,7 @@ function initHandGesture() {
   });
   
   hands.onResults(onHandResults);
+  console.log('MediaPipe Hands initialized');
 }
 
 function startCamera() {
@@ -2596,29 +2600,59 @@ function startCamera() {
   
   initHandGesture();
   
+  if (!hands) {
+    console.error('MediaPipe Hands not initialized');
+    return;
+  }
+  
+  updateCameraStatus('active', '正在请求摄像头权限...');
+  
   navigator.mediaDevices.getUserMedia({ 
     video: { 
-      width: 320, 
-      height: 240,
+      width: { ideal: 320 }, 
+      height: { ideal: 240 },
       facingMode: 'user'
     },
     audio: false 
   })
   .then(stream => {
+    console.log('Camera stream obtained:', stream);
     cameraVideo.srcObject = stream;
+    
     cameraVideo.onloadedmetadata = () => {
+      console.log('Video metadata loaded:', cameraVideo.videoWidth, 'x', cameraVideo.videoHeight);
       cameraCanvas.width = cameraVideo.videoWidth;
       cameraCanvas.height = cameraVideo.videoHeight;
-      isHandGestureEnabled = true;
-      document.getElementById('cameraContainer').style.display = 'block';
-      document.getElementById('handGestureBtn').textContent = '🖐 关闭手势控制';
-      updateCameraStatus('active', '手势识别已就绪');
-      processHandFrames();
+      
+      cameraVideo.play().then(() => {
+        console.log('Video playing');
+        isHandGestureEnabled = true;
+        document.getElementById('cameraContainer').style.display = 'block';
+        document.getElementById('handGestureBtn').textContent = '🖐 关闭手势控制';
+        updateCameraStatus('active', '手势识别已就绪');
+        processHandFrames();
+      }).catch(err => {
+        console.error('Video play error:', err);
+        updateCameraStatus('error', '视频播放失败');
+      });
+    };
+    
+    cameraVideo.onerror = (err) => {
+      console.error('Video element error:', err);
+      updateCameraStatus('error', '视频设备错误');
     };
   })
   .catch(err => {
     console.error('Camera error:', err);
-    updateCameraStatus('error', '无法访问摄像头');
+    let errorMsg = '无法访问摄像头';
+    if (err.name === 'NotAllowedError') {
+      errorMsg = '摄像头权限被拒绝，请在浏览器设置中允许';
+    } else if (err.name === 'NotFoundError') {
+      errorMsg = '未检测到摄像头设备';
+    } else if (err.name === 'NotReadableError') {
+      errorMsg = '摄像头被其他应用占用';
+    }
+    updateCameraStatus('error', errorMsg);
     isHandGestureEnabled = false;
   });
 }
@@ -2659,7 +2693,12 @@ function updateCameraStatus(status, text) {
 }
 
 async function processHandFrames() {
-  if (!isHandGestureEnabled || !cameraVideo) return;
+  if (!isHandGestureEnabled || !cameraVideo || !hands) return;
+  
+  if (cameraVideo.readyState !== 4) {
+    requestAnimationFrame(processHandFrames);
+    return;
+  }
   
   if (!isProcessingFrame) {
     isProcessingFrame = true;
@@ -2675,7 +2714,7 @@ async function processHandFrames() {
 }
 
 function onHandResults(results) {
-  if (!cameraCtx || !cameraCanvas) return;
+  if (!cameraCtx || !cameraCanvas || !cameraVideo) return;
   
   cameraCtx.save();
   cameraCtx.clearRect(0, 0, cameraCanvas.width, cameraCanvas.height);
@@ -2733,39 +2772,24 @@ function processHandGesture(landmarks) {
     y: (landmarks[0].y + landmarks[9].y) / 2
   };
   
-  const currentHandX = 1 - palmCenter.x;
-  
-  detectHandSwipe(currentHandX);
+  detectHandSwipe(palmCenter.x);
   detectFist(landmarks);
 }
 
 function detectHandSwipe(currentHandX) {
-  const now = Date.now();
-  if (now - lastSwipeTime < swipeCooldown) return;
+  const cardElements = document.querySelectorAll('.tarot-card');
+  if (cardElements.length === 0) return;
   
-  const delta = currentHandX - lastHandX;
+  const totalCards = cardElements.length;
+  let mappedIndex = Math.floor(currentHandX * totalCards);
   
-  if (Math.abs(delta) > handMoveThreshold) {
-    const direction = delta > 0 ? 'right' : 'left';
-    
-    const cardElements = document.querySelectorAll('.tarot-card');
-    if (cardElements.length === 0) return;
-    
-    const step = direction === 'left' ? 3 : -3;
-    let newIndex = highlightedCardIndex + step;
-    
-    if (newIndex < 0) newIndex = cardElements.length - Math.abs(newIndex);
-    if (newIndex >= cardElements.length) newIndex = newIndex - cardElements.length;
-    
-    updateHighlightedCard(newIndex);
-    
-    lastSwipeTime = now;
-    lastHandX = currentHandX;
-    
+  mappedIndex = Math.max(0, Math.min(totalCards - 1, mappedIndex));
+  
+  if (mappedIndex !== highlightedCardIndex) {
+    updateHighlightedCard(mappedIndex);
+    const direction = mappedIndex > highlightedCardIndex ? 'left' : 'right';
     updateCameraStatus('active', direction === 'left' ? '← 向左浏览' : '→ 向右浏览');
   }
-  
-  lastHandX = currentHandX;
 }
 
 function detectFist(landmarks) {
