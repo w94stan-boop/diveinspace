@@ -1538,6 +1538,8 @@ html, body {
           <option value="500">简短 (500字)</option>
           <option value="1000">中等 (1000字)</option>
           <option value="2000">详细 (2000字)</option>
+          <option value="3000">完整 (3000字)</option>
+          <option value="4000">详尽 (4000字)</option>
         </select>
       </div>
       
@@ -1594,7 +1596,7 @@ const DEFAULT_AI_CONFIG = {
   apiKey: '',
   model: 'gpt-4o',
   temperature: 0.7,
-  maxTokens: 1000
+  maxTokens: 3000
 };
 
 const DEFAULT_GESTURE_CONFIG = {
@@ -1842,19 +1844,36 @@ async function callOpenAI(prompt, config) {
 
   const body = {
     model: config.model,
-    messages: [{ role: 'system', content: `你是专业塔罗牌解读师。解读风格：直接、简洁、清晰。
+    messages: [{ role: 'system', content: `你是专业塔罗牌解读师，擅长深度分析和精准预测。解读风格：专业、深入、全面。
 
 【输出格式】
-核心讯息：一句话总结
-现状分析：当前情况
-趋势预测：未来走向
-行动建议：3条具体建议
+## 核心讯息
+- 一句话总结本次占卜的核心内容
+
+## 牌面详解
+- 逐一解读每张牌的含义（正位/逆位）
+- 分析牌与牌之间的关联和相互影响
+
+## 现状分析
+- 深入分析当前面临的情况和挑战
+- 揭示潜在的问题和机会
+
+## 趋势预测
+- 预测未来发展趋势
+- 指出可能出现的转折点
+
+## 行动建议
+- 提供3-5条具体、可操作的建议
+- 针对不同情况给出应对策略
+
+## 注意事项
+- 需要特别注意的事项和警示
 
 【要求】
-- 语言直白，不绕弯子
-- 突出重点，避免废话
-- 结论明确，有理有据
-- 建议实用，可操作` }, { role: 'user', content: prompt }],
+- 内容详实，分析深入，避免流于表面
+- 语言清晰，结构分明，逻辑严谨
+- 结论明确，有理有据，建议实用
+- 根据问题复杂度调整详细程度，确保覆盖所有关键点` }, { role: 'user', content: prompt }],
     temperature: parseFloat(config.temperature),
     max_tokens: parseInt(config.maxTokens),
     stream: true
@@ -1870,7 +1889,7 @@ async function callOpenAI(prompt, config) {
       headers: headers,
       body: body
     }),
-    signal: AbortSignal.timeout(60000)
+    signal: AbortSignal.timeout(120000)
   });
 }
 
@@ -1881,7 +1900,7 @@ async function callGemini(prompt, config) {
   const targetUrl = `${endpoint}${separator}key=${config.apiKey}`;
 
   const requestBody = {
-    contents: [{ parts: [{ text: `你是专业塔罗牌解读师。解读风格：直接、简洁、清晰。\n\n【输出格式】\n核心讯息：一句话总结\n现状分析：当前情况\n趋势预测：未来走向\n行动建议：3条具体建议\n\n【要求】语言直白，不绕弯子，突出重点，避免废话，结论明确，有理有据，建议实用，可操作\n\n用户问题：${prompt}` }] }],
+    contents: [{ parts: [{ text: `你是专业塔罗牌解读师，擅长深度分析和精准预测。解读风格：专业、深入、全面。\n\n【输出格式】\n## 核心讯息\n- 一句话总结本次占卜的核心内容\n\n## 牌面详解\n- 逐一解读每张牌的含义（正位/逆位）\n- 分析牌与牌之间的关联和相互影响\n\n## 现状分析\n- 深入分析当前面临的情况和挑战\n- 揭示潜在的问题和机会\n\n## 趋势预测\n- 预测未来发展趋势\n- 指出可能出现的转折点\n\n## 行动建议\n- 提供3-5条具体、可操作的建议\n- 针对不同情况给出应对策略\n\n## 注意事项\n- 需要特别注意的事项和警示\n\n【要求】\n- 内容详实，分析深入，避免流于表面\n- 语言清晰，结构分明，逻辑严谨\n- 结论明确，有理有据，建议实用\n- 根据问题复杂度调整详细程度，确保覆盖所有关键点\n\n用户问题：${prompt}` }] }],
     generationConfig: {
       temperature: parseFloat(config.temperature),
       maxOutputTokens: parseInt(config.maxTokens)
@@ -1896,7 +1915,7 @@ async function callGemini(prompt, config) {
       headers: {},
       body: requestBody
     }),
-    signal: AbortSignal.timeout(60000)
+    signal: AbortSignal.timeout(120000)
   });
 }
 
@@ -3004,7 +3023,7 @@ function showResult() {
     
     streamApi(prompt, aiConfig, (chunk) => {
       generatedText += chunk;
-      summaryTextEl.textContent = generatedText;
+      summaryTextEl.innerHTML = formatMarkdown(generatedText);
     }, (error) => {
       let errorMsg = error;
       let suggestion = '';
@@ -3027,7 +3046,7 @@ function showResult() {
       summaryTextEl.innerHTML = `
         <div class="error-message">⚠️ AI解读失败：${errorMsg}</div>
         ${suggestion ? `<div style="margin-top: 10px; color: #ff9800; font-size: 0.8rem;">${suggestion}</div>` : ''}
-        <div style="margin-top: 15px;">${fallbackText}</div>
+        <div style="margin-top: 15px;">${formatMarkdown(fallbackText)}</div>
       `;
       updateLastHistorySummary(fallbackText);
     }, () => {
@@ -3162,6 +3181,30 @@ function openHistory() {
 function closeHistory() {
   document.getElementById('historyModal').classList.remove('active');
   showStage(previousStage);
+}
+
+function formatMarkdown(text) {
+  if (!text) return '';
+  
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+  html = html.replace(/<\/ul>\s*<ul>/g, '');
+  
+  html = html.replace(/\n/g, '<br>');
+  
+  return html;
 }
 
 function generateComprehensiveReading(summaries) {
