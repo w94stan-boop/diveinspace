@@ -1512,7 +1512,12 @@ html, body {
           <label class="radio-label">
             <input type="radio" name="apiType" value="custom">
             <span class="radio-indicator"></span>
-            自定义连接
+            自定义连接（代理转发）
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="apiType" value="direct">
+            <span class="radio-indicator"></span>
+            直接连接（推荐）
           </label>
         </div>
       </div>
@@ -1522,6 +1527,7 @@ html, body {
         <select class="form-select" id="aiProvider">
           <option value="openai">OpenAI (GPT-4o)</option>
           <option value="gemini">Google Gemini</option>
+          <option value="local">仅使用本地解读</option>
           <option value="tongyi">通义千问</option>
           <option value="doubao">豆包</option>
           <option value="deepseek">深度求索</option>
@@ -1642,7 +1648,15 @@ function saveGestureConfig(config) {
 function getAiConfig() {
   try {
     const saved = localStorage.getItem(AI_CONFIG_KEY);
-    return saved ? JSON.parse(saved) : DEFAULT_AI_CONFIG;
+    if (saved) {
+      const config = JSON.parse(saved);
+      if (!config.maxTokens || config.maxTokens < 1000) {
+        config.maxTokens = 3000;
+        localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+      }
+      return config;
+    }
+    return DEFAULT_AI_CONFIG;
   } catch {
     return DEFAULT_AI_CONFIG;
   }
@@ -1856,7 +1870,8 @@ class GestureRecognizer {
 
 async function callOpenAI(prompt, config) {
   const headers = {
-    'Authorization': `Bearer ${config.apiKey}`
+    'Authorization': `Bearer ${config.apiKey}`,
+    'Content-Type': 'application/json'
   };
 
   const body = {
@@ -1898,6 +1913,15 @@ async function callOpenAI(prompt, config) {
 
   const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
   
+  if (config.apiType === 'direct') {
+    return fetch(targetUrl, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(120000)
+    });
+  }
+  
   return fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1923,6 +1947,15 @@ async function callGemini(prompt, config) {
       maxOutputTokens: parseInt(config.maxTokens)
     }
   };
+
+  if (config.apiType === 'direct') {
+    return fetch(targetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(120000)
+    });
+  }
 
   return fetch(PROXY_URL, {
     method: 'POST',
@@ -1961,16 +1994,26 @@ async function testApiConnection(config) {
       };
     }
 
-    const response = await fetch(PROXY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url: endpoint,
+    let response;
+    if (config.apiType === 'direct') {
+      response = await fetch(endpoint, {
+        method: 'POST',
         headers: customHeaders,
-        body: body
-      }),
-      signal: AbortSignal.timeout(15000)
-    });
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(15000)
+      });
+    } else {
+      response = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: endpoint,
+          headers: customHeaders,
+          body: body
+        }),
+        signal: AbortSignal.timeout(15000)
+      });
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
@@ -2003,6 +2046,7 @@ async function testApiConnection(config) {
 async function streamApi(prompt, config, onChunk, onError, onComplete) {
   const maxRetries = 3;
   let retryCount = 0;
+  let buffer = '';
   
   while (retryCount < maxRetries) {
     try {
@@ -2038,9 +2082,13 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
         if (done) break;
         
         const chunk = decoder.decode(value);
+        console.log(`Raw chunk received: ${chunk.length} bytes`);
         
         if (config.provider !== 'gemini') {
-          const lines = chunk.split('\n').filter(line => line.trim());
+          buffer += chunk;
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               const data = line.substring(6);
@@ -2048,9 +2096,12 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
               try {
                 const json = JSON.parse(data);
                 const content = json.choices?.[0]?.delta?.content;
-                if (content) onChunk(content);
-              } catch {
-                continue;
+                if (content) {
+                  console.log(`Parsed content: "${content.substring(0, 50)}..."`);
+                  onChunk(content);
+                }
+              } catch (parseError) {
+                console.warn('JSON parse error:', parseError.message, 'Line:', line);
               }
             }
           }
@@ -2058,9 +2109,12 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
           try {
             const json = JSON.parse(chunk);
             const content = json.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (content) onChunk(content);
-          } catch {
-            continue;
+            if (content) {
+              console.log(`Gemini content: "${content.substring(0, 50)}..."`);
+              onChunk(content);
+            }
+          } catch (parseError) {
+            console.warn('Gemini JSON parse error:', parseError.message);
           }
         }
       }
@@ -2091,6 +2145,77 @@ async function streamApi(prompt, config, onChunk, onError, onComplete) {
         onError(`AI调用失败: ${error.message}`);
       }
     }
+  }
+}
+
+async function fetchFullResponse(prompt, config, callback) {
+  try {
+    const headers = {
+      'Authorization': `Bearer ${config.apiKey}`
+    };
+
+    const body = {
+      model: config.model,
+      messages: [{ role: 'system', content: `你是专业塔罗牌解读师，擅长深度分析和精准预测。解读风格：专业、深入、全面。
+
+【输出格式】
+## 核心讯息
+- 一句话总结本次占卜的核心内容
+
+## 牌面详解
+- 逐一解读每张牌的含义（正位/逆位）
+- 分析牌与牌之间的关联和相互影响
+
+## 现状分析
+- 深入分析当前面临的情况和挑战
+- 揭示潜在的问题和机会
+
+## 趋势预测
+- 预测未来发展趋势
+- 指出可能出现的转折点
+
+## 行动建议
+- 提供3-5条具体、可操作的建议
+- 针对不同情况给出应对策略
+
+## 注意事项
+- 需要特别注意的事项和警示
+
+【要求】
+- 内容详实，分析深入，避免流于表面
+- 语言清晰，结构分明，逻辑严谨
+- 结论明确，有理有据，建议实用
+- 根据问题复杂度调整详细程度，确保覆盖所有关键点` }, { role: 'user', content: prompt }],
+      temperature: parseFloat(config.temperature),
+      max_tokens: parseInt(config.maxTokens),
+      stream: false
+    };
+
+    const targetUrl = config.apiEndpoint || 'https://api.openai.com/v1/chat/completions';
+    
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: targetUrl,
+        headers: headers,
+        body: body
+      }),
+      signal: AbortSignal.timeout(120000)
+    });
+
+    if (!response.ok) {
+      console.error('Non-streaming API error:', response.status);
+      return;
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+    if (content) {
+      callback(content);
+    }
+  } catch (error) {
+    console.error('Fetch full response error:', error);
   }
 }
 
@@ -2151,10 +2276,10 @@ const MINOR_ARCANA = {
     { id: 29, name: '权杖八', english: 'Eight of Wands', meaning: '迅速行动、消息、旅行、进展', reversed: '延迟、阻碍、消息延迟', advice: '迅速行动，抓住机会' },
     { id: 30, name: '权杖九', english: 'Nine of Wands', meaning: '警惕、防御、耐力、准备', reversed: '过度警惕、缺乏准备、恐惧', advice: '保持警惕，但不要过度紧张' },
     { id: 31, name: '权杖十', english: 'Ten of Wands', meaning: '负担、责任、压力、过度承诺', reversed: '放下负担、寻求帮助', advice: '学会放手，寻求帮助' },
-    { id: 32, name: '权杖骑士', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
-    { id: 33, name: '权杖王后', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
-    { id: 34, name: '权杖国王', english: 'King of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
-    { id: 35, name: '权杖皇后', english: 'Queen of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
+    { id: 32, name: '权杖侍从', english: 'Page of Wands', meaning: '热情、好奇心、创意、新机会', reversed: '缺乏热情、不切实际', advice: '保持好奇心，探索新机会' },
+    { id: 33, name: '权杖骑士', english: 'Knight of Wands', meaning: '冒险、勇气、行动、热情', reversed: '鲁莽、冲动、缺乏耐心', advice: '勇敢行动，但保持谨慎' },
+    { id: 34, name: '权杖王后', english: 'Queen of Wands', meaning: '领导力、自信、热情、独立', reversed: '控制欲、缺乏耐心、急躁', advice: '发挥你的领导力，激励他人' },
+    { id: 35, name: '权杖国王', english: 'King of Wands', meaning: '权威、远见、创造力、成功', reversed: '专制、缺乏远见、失败', advice: '运用你的权威，创造成功' }
   ],
   cups: [
     { id: 36, name: '圣杯一', english: 'Ace of Cups', meaning: '爱、情感、新关系、直觉', reversed: '情感阻塞、拒绝爱', advice: '敞开心扉，接纳爱与情感' },
@@ -2167,10 +2292,10 @@ const MINOR_ARCANA = {
     { id: 43, name: '圣杯八', english: 'Eight of Cups', meaning: '离开、寻求更好、放弃', reversed: '不愿离开、停滞、缺乏勇气', advice: '勇敢离开，寻求更好的未来' },
     { id: 44, name: '圣杯九', english: 'Nine of Cups', meaning: '满足、愿望实现、幸福、成功', reversed: '不满、愿望未实现、缺乏感恩', advice: '珍惜已拥有的，感恩生活' },
     { id: 45, name: '圣杯十', english: 'Ten of Cups', meaning: '家庭和谐、幸福、满足、团聚', reversed: '家庭冲突、不幸福、分离', advice: '珍惜家庭，维护和谐' },
-    { id: 46, name: '圣杯骑士', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
-    { id: 47, name: '圣杯王后', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
-    { id: 48, name: '圣杯国王', english: 'King of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
-    { id: 49, name: '圣杯皇后', english: 'Queen of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
+    { id: 46, name: '圣杯侍从', english: 'Page of Cups', meaning: '敏感、直觉、创造力、浪漫', reversed: '情绪化、缺乏安全感', advice: '信任你的直觉，表达情感' },
+    { id: 47, name: '圣杯骑士', english: 'Knight of Cups', meaning: '浪漫、体贴、敏感、追求者', reversed: '不真诚、轻浮、情绪化', advice: '保持真诚，用心对待感情' },
+    { id: 48, name: '圣杯王后', english: 'Queen of Cups', meaning: '同理心、直觉、情感支持、温柔', reversed: '情绪化、过度保护', advice: '用你的同理心帮助他人' },
+    { id: 49, name: '圣杯国王', english: 'King of Cups', meaning: '情绪稳定、智慧、领导力、仁慈', reversed: '情绪化、缺乏控制', advice: '保持情绪稳定，展现智慧' }
   ],
   swords: [
     { id: 50, name: '宝剑一', english: 'Ace of Swords', meaning: '真理、清晰、新思想、沟通', reversed: '混乱、误解、沟通不畅', advice: '寻求真理，清晰表达' },
@@ -2183,10 +2308,10 @@ const MINOR_ARCANA = {
     { id: 57, name: '宝剑八', english: 'Eight of Swords', meaning: '限制、恐惧、被困、自我怀疑', reversed: '解放、勇气、突破限制', advice: '勇敢突破，相信自己' },
     { id: 58, name: '宝剑九', english: 'Nine of Swords', meaning: '焦虑、恐惧、失眠、内疚', reversed: '释放恐惧、疗愈、平静', advice: '面对恐惧，寻求平静' },
     { id: 59, name: '宝剑十', english: 'Ten of Swords', meaning: '结束、痛苦、失败、背叛', reversed: '新开始、恢复、希望', advice: '接受结束，期待新开始' },
-    { id: 60, name: '宝剑骑士', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
-    { id: 61, name: '宝剑王后', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
-    { id: 62, name: '宝剑国王', english: 'King of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
-    { id: 63, name: '宝剑皇后', english: 'Queen of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
+    { id: 60, name: '宝剑侍从', english: 'Page of Swords', meaning: '好奇心、学习、沟通、机智', reversed: '八卦、缺乏纪律、轻浮', advice: '保持好奇心，认真学习' },
+    { id: 61, name: '宝剑骑士', english: 'Knight of Swords', meaning: '行动、逻辑、勇气、追求真理', reversed: '鲁莽、冲动、缺乏思考', advice: '理性行动，追求真理' },
+    { id: 62, name: '宝剑王后', english: 'Queen of Swords', meaning: '独立、智慧、清晰、公正', reversed: '苛刻、冷酷、缺乏同理心', advice: '保持智慧，展现同理心' },
+    { id: 63, name: '宝剑国王', english: 'King of Swords', meaning: '权威、逻辑、公正、领导力', reversed: '专制、不公正、缺乏同情心', advice: '运用智慧和公正领导' }
   ],
   pentacles: [
     { id: 64, name: '星币一', english: 'Ace of Pentacles', meaning: '财富、新机会、物质、稳定', reversed: '错失机会、财务问题', advice: '抓住机会，谨慎理财' },
@@ -2199,10 +2324,10 @@ const MINOR_ARCANA = {
     { id: 71, name: '星币八', english: 'Eight of Pentacles', meaning: '技能、专注、勤奋、改进', reversed: '缺乏专注、技能不足、懒惰', advice: '专注提升，勤奋工作' },
     { id: 72, name: '星币九', english: 'Nine of Pentacles', meaning: '独立、成功、富足、自信', reversed: '依赖、缺乏成功、不满足', advice: '享受独立，保持自信' },
     { id: 73, name: '星币十', english: 'Ten of Pentacles', meaning: '财富、家庭、遗产、长期安全', reversed: '家庭问题、财务不稳定', advice: '重视家庭，规划未来' },
-    { id: 74, name: '星币骑士', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
-    { id: 75, name: '星币王后', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
-    { id: 76, name: '星币国王', english: 'King of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
-    { id: 77, name: '星币皇后', english: 'Queen of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
+    { id: 74, name: '星币侍从', english: 'Page of Pentacles', meaning: '学习、成长、耐心、责任', reversed: '缺乏耐心、不负责任', advice: '耐心学习，承担责任' },
+    { id: 75, name: '星币骑士', english: 'Knight of Pentacles', meaning: '勤奋、可靠、稳定、耐心', reversed: '懒惰、不可靠、缺乏动力', advice: '保持勤奋，坚守承诺' },
+    { id: 76, name: '星币王后', english: 'Queen of Pentacles', meaning: '养育、关怀、家庭、物质安全', reversed: '忽视家庭、缺乏关怀', advice: '关怀他人，维护家庭' },
+    { id: 77, name: '星币国王', english: 'King of Pentacles', meaning: '成功、富足、领导力、慷慨', reversed: '贪婪、缺乏成功、自私', advice: '运用你的成功，帮助他人' }
   ]
 };
 
@@ -3030,7 +3155,7 @@ function showResult() {
   const aiConfig = getAiConfig();
   const summaryTextEl = document.getElementById('summaryText');
   
-  if (aiConfig.apiKey && aiConfig.apiEndpoint) {
+  if (aiConfig.apiKey && aiConfig.apiEndpoint && aiConfig.provider !== 'local') {
     const question = document.getElementById('questionInput').value.trim();
     const prompt = buildTarotPrompt(question, summaries);
     
@@ -3044,9 +3169,29 @@ function showResult() {
     `;
     
     let generatedText = '';
+    let chunkCount = 0;
+    let totalChars = 0;
+    let isStreamComplete = false;
+    let fallbackTriggered = false;
+    
+    const streamStartTime = Date.now();
+    
+    const fallbackTimeout = setTimeout(() => {
+      if (!isStreamComplete && !fallbackTriggered) {
+        fallbackTriggered = true;
+        console.log('AI response too slow, using fallback');
+        const fallbackText = generateComprehensiveReading(summaries);
+        summaryTextEl.innerHTML = formatMarkdown(fallbackText);
+        updateLastHistorySummary(fallbackText);
+      }
+    }, 10000);
     
     streamApi(prompt, aiConfig, (chunk) => {
+      if (fallbackTriggered) return;
       generatedText += chunk;
+      chunkCount++;
+      totalChars += chunk.length;
+      console.log(`Chunk ${chunkCount}: ${chunk.length} chars, total: ${totalChars}`);
       summaryTextEl.innerHTML = formatMarkdown(generatedText);
     }, (error) => {
       let errorMsg = error;
@@ -3074,7 +3219,24 @@ function showResult() {
       `;
       updateLastHistorySummary(fallbackText);
     }, () => {
-      updateLastHistorySummary(generatedText);
+      isStreamComplete = true;
+      clearTimeout(fallbackTimeout);
+      const streamDuration = Date.now() - streamStartTime;
+      console.log(`Stream complete: ${totalChars} chars in ${streamDuration}ms`);
+      
+      if (totalChars < 200) {
+        console.warn('Stream response is too short, trying non-streaming API');
+        fetchFullResponse(prompt, aiConfig, (fullText) => {
+          if (fullText && fullText.length > generatedText.length) {
+            generatedText = fullText;
+            summaryTextEl.innerHTML = formatMarkdown(generatedText);
+            console.log(`Fallback successful: ${generatedText.length} chars`);
+          }
+          updateLastHistorySummary(generatedText);
+        });
+      } else {
+        updateLastHistorySummary(generatedText);
+      }
     });
   } else {
     const summaryText = generateComprehensiveReading(summaries);
@@ -3528,6 +3690,7 @@ async function init() {
   testConnectionBtn.addEventListener('click', async () => {
     const config = {
       provider: aiProvider.value,
+      apiType: radioDomestic.checked ? 'domestic' : (document.querySelector('input[name="apiType"]:checked')?.value || 'custom'),
       apiEndpoint: apiEndpoint.value.trim(),
       apiKey: apiKeyInput.value.trim(),
       model: aiModel.value.trim()
